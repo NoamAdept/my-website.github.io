@@ -4,169 +4,258 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Noam Yakar – CS & Math Graduate</title>
+
+  <!-- Google Font & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-mQn+1w5+ZW6nZy4wPazk1f8Gq5gZoI8shhnswSPs1fMcmqJ3v6Pu+0hY5jKGc6IoHl/LvPbG2ZdAlM0J1zYH6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <style>
+    /* Variables */
     :root {
       --bg: #f5f7fa;
       --accent: #0a66c2;
+      --accent-alt: #64ffda;
       --text: #333;
       --heading: #111;
       --light: #555;
+      --glass-bg: rgba(255,255,255,0.2);
     }
+
+    /* Global */
+    html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, system-ui, sans-serif;
+      font-family: 'Poppins', sans-serif;
       background: var(--bg);
       color: var(--text);
+      overflow-x: hidden;
       line-height: 1.6;
     }
-    a { color: var(--accent); text-decoration: none; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      position: relative;
+    }
+    a::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 100%; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    a:hover::after { transform: scaleX(1); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    /* Header */
     header {
-      background: white;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: saturate(180%) blur(10px);
       padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      position: sticky; top: 0; z-index: 10;
+      position: sticky; top: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.3s ease;
     }
-    header .logo { font-size: 1.25rem; font-weight: bold; color: var(--accent); }
-    nav ul { list-style: none; display: flex; gap: 1.5rem; }
-    nav a:hover { text-decoration: underline; }
-    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-    .hero {
-      text-align: center;
-      padding: 3rem 1rem;
+    header .logo {
+      font-size: 1.5rem; font-weight: 700; color: var(--heading);
     }
-    .hero h1 { font-size: 2.5rem; color: var(--heading); margin-bottom: 0.5rem; }
-    .hero p { color: var(--light); font-size: 1.1rem; }
-    section { margin-top: 3rem; }
+    nav ul { display: flex; gap: 1.5rem; }
+
+    /* Main & Sections */
+    main { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
+    section {
+      margin: 3rem 0;
+      scroll-snap-align: start;
+    }
     section h2 {
       font-size: 1.75rem;
       color: var(--heading);
-      border-bottom: 2px solid var(--accent);
+      position: relative;
+      padding-bottom: 0.5rem;
       display: inline-block;
-      margin-bottom: 1rem;
+    }
+    section h2::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 50px; height: 4px;
+      background: var(--accent-alt);
+      border-radius: 2px;
     }
 
-    /* Education & Skills Grid */
+    /* Hero */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 6rem 1rem;
+      color: #fff;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(-45deg, var(--accent), var(--accent-alt), var(--accent), var(--accent-alt));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      mix-blend-mode: overlay;
+      z-index: 0;
+    }
+    .hero h1, .hero p, .btn {
+      position: relative; z-index: 1; opacity: 0;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      animation: fadeInDown 1s ease-out forwards;
+    }
+    .hero p {
+      font-size: 1.2rem; margin: 1rem auto;
+      max-width: 600px;
+      animation: fadeInUp 1s 0.5s ease-out forwards;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #fff;
+      border-radius: 50px;
+      background: transparent;
+      color: #fff;
+      font-weight: 600;
+      transition: background 0.3s, color 0.3s, transform 0.3s;
+      animation: fadeInUp 1s 1s ease-out forwards;
+    }
+    .btn:hover {
+      background: #fff; color: var(--accent);
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Glassmorphism Cards */
+    .education-item, .skill-list-item,
+    .experience-item, .project-card,
+    .contact-form {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* Education & Skills */
     .resume-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 2rem;
     }
     .education-item, .skill-list-item {
-      background: white;
-      padding: 1rem;
-      border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .education-item h3,
-    .education-item p,
-    .skill-list-item ul {
-      margin-bottom: 0.5rem;
-    }
-    .skill-list-item ul {
-      list-style: disc inside;
+      padding: 1rem; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     /* Experience */
     .experience-item {
-      background: white;
       padding: 1rem 1.5rem;
       border-left: 4px solid var(--accent);
       margin-bottom: 1.5rem;
-      border-radius: 0 4px 4px 0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .experience-item h3 {
-      margin-bottom: 0.25rem;
-      color: var(--heading);
-    }
-    .experience-item span {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--light);
-      margin-bottom: 0.75rem;
-    }
-    .experience-item ul {
-      list-style: disc inside;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* Projects Grid */
+    /* Projects */
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
       gap: 1.5rem;
     }
     .project-card {
-      background: white;
-      padding: 1rem;
-      border-radius: 4px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 1rem; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .project-card h4 {
-      margin-bottom: 0.5rem;
-      color: var(--heading);
+    .project-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
-    .project-card p {
-      font-size: 0.95rem;
-      margin-bottom: 0.75rem;
-      color: var(--light);
-    }
-    .project-links a {
-      font-size: 0.9rem;
-      margin-right: 1rem;
-    }
+    .project-card h4 { margin-bottom: 0.5rem; color: var(--heading); }
+    .project-card p { font-size: 0.95rem; color: var(--light); margin-bottom: 0.75rem; }
 
     /* Contact */
     .contact-form {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .contact-form label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
+      display: block; margin-bottom: 0.25rem; font-weight: 600;
     }
     .contact-form input,
     .contact-form textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      width: 100%; padding: 0.6rem; margin-bottom: 1rem;
+      border: 1px solid #ccc; border-radius: 4px;
     }
+    /* Ripple effect */
     .contact-form button {
-      background: var(--accent);
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      position: relative; overflow: hidden;
+      background: var(--accent); color: #fff;
+      padding: 0.6rem 1.2rem; border: none; border-radius: 4px;
+      cursor: pointer; transition: transform 0.3s;
     }
     .contact-form button:hover {
-      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    .contact-form button::after {
+      content: '';
+      position: absolute; width: 100px; height: 100px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      transform: scale(0); opacity: 0;
+      transition: transform 0.5s, opacity 1s;
+      pointer-events: none;
+      left: 50%; top: 50%;
+      transform-origin: center;
+    }
+    .contact-form button:active::after {
+      transform: scale(1); opacity: 1;
+      transition: 0s;
     }
 
+    /* Footer */
     footer {
       text-align: center;
       margin: 3rem 0 1rem;
-      font-size: 0.9rem;
-      color: var(--light);
+      font-size: 0.9rem; color: var(--light);
+    }
+    footer a {
+      margin: 0 0.5rem; color: var(--accent-alt);
+      transition: transform 0.3s ease;
+    }
+    footer a:hover {
+      transform: translateY(-3px);
     }
   </style>
 
   <!-- AOS CSS & JS -->
   <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
   <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      AOS.init({ duration: 800, once: true });
-    });
-  </script>
+  <script>document.addEventListener('DOMContentLoaded', () => AOS.init({ duration: 800, once: true }));</script>
 </head>
-<body>
 
+<body>
   <header>
     <div class="logo">Noam Yakar</div>
     <nav>
@@ -185,6 +274,7 @@
     <section class="hero" id="home" data-aos="fade-up">
       <h1>Hi, I’m Noam Yakar</h1>
       <p>Summa Cum Laude CS & Math grad from ASU. I build data-driven tools, secure systems, and visualizations.</p>
+      <a href="#projects" class="btn">View Projects</a>
     </section>
 
     <!-- EDUCATION -->
@@ -327,7 +417,9 @@
   </main>
 
   <footer>
-    &copy; 2025 Noam Yakar · <a href="https://github.com/NoamAdept">GitHub</a> · <a href="#">LinkedIn</a>
+    &copy; 2025 Noam Yakar ·
+    <a href="https://github.com/NoamAdept"><i class="fab fa-github"></i></a>
+    <a href="#"><i class="fab fa-linkedin"></i></a>
   </footer>
 </body>
 </html>
