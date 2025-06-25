@@ -73,6 +73,42 @@
       font-weight:500; min-height:1.5em;
     }
 
+    /* === Skills Chart === */
+    #skills { text-align:center; }
+    #skills-chart { max-width:600px; margin:1rem auto; }
+
+    /* === Timeline === */
+    #timeline { position:relative; }
+    #timeline::before {
+      content: ""; position:absolute;
+      left:50%; top:0; bottom:0;
+      width:2px; background:var(--accent);
+    }
+    .timeline-item {
+      position:relative;
+      width:50%; padding:1rem 2rem;
+    }
+    .timeline-item:nth-child(odd) {
+      left:0; text-align:right;
+    }
+    .timeline-item:nth-child(even) {
+      left:50%; text-align:left;
+    }
+    .timeline-item::before {
+      content:""; position:absolute;
+      top:1.25rem; width:12px; height:12px;
+      border-radius:50%; background:var(--accent);
+      border:2px solid var(--bg);
+    }
+    .timeline-item:nth-child(odd)::before {
+      right:-8px;
+    }
+    .timeline-item:nth-child(even)::before {
+      left:-8px;
+    }
+    .timeline-item h3 { margin-bottom:.25rem; font-size:1rem; }
+    .timeline-item p  { font-size:.9rem; color:var(--text); }
+
     /* === Projects & Filter === */
     #project-filter {
       margin-bottom:1.5rem; padding:.5rem;
@@ -97,12 +133,9 @@
 
     /* === GitHub Activity === */
     #github img {
-      width:100%; max-width:800px; border-radius:6px;
-      margin-bottom:1rem;
+      width:100%; max-width:800px; border-radius:6px; margin-bottom:1rem;
     }
-    #github-events {
-      list-style:none; padding:0;
-    }
+    #github-events { list-style:none; padding:0; }
     #github-events li {
       padding:.5rem 0; border-bottom:1px solid var(--card-bg);
     }
@@ -126,6 +159,9 @@
       a::after { display:none; }
     }
   </style>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -133,6 +169,8 @@
     <nav>
       <ul>
         <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#timeline">Timeline</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#github">GitHub</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -149,6 +187,35 @@
     <section id="home">
       <h1>Noam Yakar</h1>
       <div id="typed"></div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <h2>Skills</h2>
+      <canvas id="skills-chart"></canvas>
+    </section>
+
+    <!-- TIMELINE -->
+    <section id="timeline">
+      <h2>Timeline</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h3>Jun 2024 – Aug 2024</h3>
+          <p>Data Engineering Intern, Nike</p>
+        </div>
+        <div class="timeline-item">
+          <h3>Aug 2023 – May 2024</h3>
+          <p>Statistical Modeling Analyst, ASU</p>
+        </div>
+        <div class="timeline-item">
+          <h3>Jun 2023 – Aug 2023</h3>
+          <p>Cybersecurity Data Intern, Radware Inc.</p>
+        </div>
+        <div class="timeline-item">
+          <h3>2021 – 2025</h3>
+          <p>BSc CS & Math, Arizona State University</p>
+        </div>
+      </div>
     </section>
 
     <!-- PROJECTS -->
@@ -183,12 +250,8 @@
     <!-- GITHUB ACTIVITY -->
     <section id="github">
       <h2>GitHub Activity</h2>
-      <!-- Contribution Graph -->
       <img src="https://ghchart.rshah.org/NoamAdept" alt="GitHub Contribution Graph" />
-      <!-- Recent Events -->
-      <ul id="github-events">
-        <li>Loading activity…</li>
-      </ul>
+      <ul id="github-events"><li>Loading activity…</li></ul>
     </section>
 
     <!-- CONTACT -->
@@ -217,7 +280,7 @@
   <button id="back-to-top" title="Back to top">↑</button>
 
   <script>
-    // 1) Theme toggle
+    // Theme toggle
     const themeBtn = document.getElementById('theme-toggle');
     const saved = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
@@ -229,10 +292,9 @@
       themeBtn.textContent = next === 'light' ? '🌙' : '☀️';
     };
 
-    // 2) Typed intro
+    // Typed intro
     const text = 'Summa Cum Laude CS & Math Graduate • Builder of Data Tools & Secure Apps';
-    let i = 0;
-    const typedEl = document.getElementById('typed');
+    let i = 0; const typedEl = document.getElementById('typed');
     function type() {
       if (i < text.length) {
         typedEl.textContent += text[i++];
@@ -241,29 +303,26 @@
     }
     document.addEventListener('DOMContentLoaded', type);
 
-    // 3) Active nav on scroll
+    // Active nav on scroll
     const navLinks = document.querySelectorAll('nav a');
-    const sections = document.querySelectorAll('main section');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        const id = e.target.id;
-        const link = document.querySelector(`nav a[href="#${id}"]`);
-        if (e.isIntersecting) {
-          navLinks.forEach(a => a.classList.remove('active'));
-          if (link) link.classList.add('active');
-        }
-      });
-    }, { threshold: 0.3 });
-    sections.forEach(s => obs.observe(s));
-
-    // 4) Back to Top
-    const btn = document.getElementById('back-to-top');
-    window.addEventListener('scroll', () => {
-      btn.style.display = window.scrollY > 300 ? 'block' : 'none';
+    document.querySelectorAll('main section').forEach(sec => {
+      new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(a => a.classList.remove('active'));
+            const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { threshold: 0.3 }).observe(sec);
     });
+
+    // Back to Top
+    const btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => btn.style.display = window.scrollY > 300 ? 'block' : 'none');
     btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // 5) Download Resume
+    // Download Resume
     document.getElementById('download-resume').onclick = () => {
       const link = document.createElement('a');
       link.href = 'resume.pdf';
@@ -271,38 +330,54 @@
       link.click();
     };
 
-    // 6) Project Filter
+    // Project Filter
     document.getElementById('project-filter').onchange = e => {
       const val = e.target.value;
       document.querySelectorAll('.project-card').forEach(card => {
-        card.style.display = (val === 'all' || card.dataset.category === val)
-          ? 'block' : 'none';
+        card.style.display = (val === 'all' || card.dataset.category === val) ? 'block' : 'none';
       });
     };
 
-    // 7) GitHub activity
-    const eventsList = document.getElementById('github-events');
+    // GitHub activity
     fetch('https://api.github.com/users/NoamAdept/events/public')
-      .then(res => res.json())
-      .then(events => {
-        eventsList.innerHTML = '';
-        events.slice(0, 5).forEach(evt => {
+      .then(res => res.json()).then(events => {
+        const list = document.getElementById('github-events');
+        list.innerHTML = '';
+        events.slice(0,5).forEach(evt => {
           const li = document.createElement('li');
           const date = new Date(evt.created_at).toLocaleDateString();
           let desc = '';
           switch(evt.type) {
             case 'PushEvent': desc = `Pushed to ${evt.repo.name}`; break;
-            case 'CreateEvent': desc = `Created ${evt.payload.ref_type} ${evt.payload.ref || ''}`.trim(); break;
+            case 'CreateEvent': desc = `Created ${evt.payload.ref_type} ${evt.payload.ref||''}`.trim(); break;
             case 'IssuesEvent': desc = `${evt.payload.action} issue #${evt.payload.issue.number}`; break;
             default: desc = `${evt.type} on ${evt.repo.name}`;
           }
           li.textContent = `${date}: ${desc}`;
-          eventsList.appendChild(li);
+          list.appendChild(li);
         });
       })
-      .catch(() => {
-        eventsList.innerHTML = '<li>Unable to load GitHub activity.</li>';
+      .catch(_=> document.getElementById('github-events').innerHTML = '<li>Couldn’t load GitHub activity.</li>');
+
+    // Skills Chart (Chart.js)
+    document.addEventListener('DOMContentLoaded', () => {
+      new Chart(document.getElementById('skills-chart'), {
+        type: 'radar',
+        data: {
+          labels: ['Python','C++','SQL','AWS','Security'],
+          datasets: [{
+            label: 'Proficiency',
+            data: [90,75,85,70,80],
+            backgroundColor: 'rgba(0,122,204,0.2)',
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+          }]
+        },
+        options: {
+          scales: { r: { beginAtZero:true, max:100 } },
+          plugins: { legend: { display:false } }
+        }
       });
+    });
   </script>
 </body>
 </html>
