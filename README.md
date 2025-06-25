@@ -186,11 +186,11 @@
           <h3>Arizona State University</h3>
           <p><em>Tempe, AZ</em> | 2021–2025</p>
           <p><strong>BSc Computer Science</strong><br>
-          <strong>BSc Mathematics</strong> (Statistics Focus)<br>
-          <strong>GPA:</strong> 3.98, Summa Cum Laude</p>
+             <strong>BSc Mathematics</strong> (Statistics Focus)<br>
+             <strong>GPA:</strong> 3.98, Summa Cum Laude</p>
           <p><strong>Key Coursework:</strong><br>
-            Real Analysis · Advanced Linear Algebra · Mathematical Statistics · Data Structures & Algorithms ·
-            Operating Systems · Stochastic Processes · Cryptography · Networks & Security · Digital Forensics
+             Real Analysis · Advanced Linear Algebra · Mathematical Statistics · Data Structures & Algorithms ·
+             Operating Systems · Stochastic Processes · Cryptography · Networks & Security · Digital Forensics
           </p>
         </div>
       </div>
