@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noam Yakar – CS & Math Graduate</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --accent: #0a66c2;
+      --text: #333;
+      --heading: #111;
+      --light: #555;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      position: sticky; top: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    header .logo { font-size: 1.25rem; font-weight: bold; color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav a:hover { text-decoration: underline; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    .hero h1 { font-size: 2.5rem; color: var(--heading); margin-bottom: 0.5rem; }
+    .hero p { color: var(--light); font-size: 1.1rem; }
+    section { margin-top: 3rem; }
+    section h2 {
+      font-size: 1.75rem;
+      color: var(--heading);
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* Education & Skills Grid */
+    .resume-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+    }
+    .education-item, .skill-list-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .education-item h3,
+    .education-item p,
+    .skill-list-item ul {
+      margin-bottom: 0.5rem;
+    }
+    .skill-list-item ul {
+      list-style: disc inside;
+    }
+
+    /* Experience */
+    .experience-item {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-left: 4px solid var(--accent);
+      margin-bottom: 1.5rem;
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .experience-item h3 {
+      margin-bottom: 0.25rem;
+      color: var(--heading);
+    }
+    .experience-item span {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--light);
+      margin-bottom: 0.75rem;
+    }
+    .experience-item ul {
+      list-style: disc inside;
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .project-card h4 {
+      margin-bottom: 0.5rem;
+      color: var(--heading);
+    }
+    .project-card p {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: var(--light);
+    }
+    .project-links a {
+      font-size: 0.9rem;
+      margin-right: 1rem;
+    }
+
+    /* Contact */
+    .contact-form {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .contact-form label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .contact-form button {
+      background: var(--accent);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .contact-form button:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      margin: 3rem 0 1rem;
+      font-size: 0.9rem;
+      color: var(--light);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Noam Yakar</div>
+    <nav>
+      <ul>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <h1>Hi, I’m Noam Yakar</h1>
+      <p>Summa Cum Laude CS & Math grad from ASU. I build data-driven tools, secure systems, and visualizations.</p>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education">
+      <h2>Education</h2>
+      <div class="resume-grid">
+        <div class="education-item">
+          <h3>Arizona State University</h3>
+          <p><em>Tempe, AZ</em> | 2021–2025</p>
+          <p><strong>BSc Computer Science</strong><br>
+             <strong>BSc Mathematics</strong> (Statistics Focus)<br>
+             <strong>GPA:</strong> 3.98, Summa Cum Laude</p>
+          <p><strong>Key Coursework:</strong><br>
+             Real Analysis · Advanced Linear Algebra · Mathematical Statistics · Data Structures & Algorithms ·
+             Operating Systems · Stochastic Processes · Cryptography · Networks & Security · Digital Forensics
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <h2>Technical Skills</h2>
+      <div class="resume-grid">
+        <div class="skill-list-item">
+          <h3>Languages & Databases</h3>
+          <ul>
+            <li>Python · R · SAS · C/C++ · SQL · Linux</li>
+          </ul>
+        </div>
+        <div class="skill-list-item">
+          <h3>Libraries & Tools</h3>
+          <ul>
+            <li>TensorFlow · Keras · PyTorch · Scikit-Learn · Shiny · ggplot2 · Pwntools</li>
+          </ul>
+        </div>
+        <div class="skill-list-item">
+          <h3>Platforms & Services</h3>
+          <ul>
+            <li>Databricks · AWS · GATK · DeepVariant · BWA-Mem · Snakemake</li>
+          </ul>
+        </div>
+        <div class="skill-list-item">
+          <h3>Security Competencies</h3>
+          <ul>
+            <li>Buffer Overflows · ROP · Shellcode Injection · Race Conditions · Kernel Exploits · Sandboxing ·
+            Micro-architecture Attacks</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <h2>Experience</h2>
+
+      <div class="experience-item">
+        <h3>Data Engineering Intern, Nike</h3>
+        <span>Oregon | Jun 2024 – Aug 2024</span>
+        <ul>
+          <li>Built and optimized data pipelines for seamless integration across systems.</li>
+          <li>Collaborated on ML-driven analytics to support data-informed decisions.</li>
+          <li>Implemented data validation protocols ensuring high data quality.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <h3>Statistical Modeling Analyst, ASU</h3>
+        <span>Arizona | Aug 2023 – May 2024</span>
+        <ul>
+          <li>Developed ARIMA and Holt-Winters models to forecast financial time series.</li>
+          <li>Automated forecasting pipelines that improved reporting speed by 30%.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <h3>Cybersecurity Data Intern, Radware Inc.</h3>
+        <span>Tel Aviv | Jun 2023 – Aug 2023</span>
+        <ul>
+          <li>Built a unit-testing framework for a client alerts REST API.</li>
+          <li>Applied PCA, t-SNE, UMAP for clustering cyber-attack datasets.</li>
+          <li>Tuned XGBoost/RF models to classify attack types with 92% accuracy.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <h4>Privacy Preserving Tool</h4>
+          <p>Flask & Vega-Lite editor for k-anonymity, l-diversity, t-closeness, differential privacy metrics.</p>
+          <div class="project-links">
+            <a href="#">Private Repo</a>
+          </div>
+        </div>
+        <div class="project-card">
+          <h4>WarGames: Secure Gradebook</h4>
+          <p>CTF-style Python tool with format-string exploits & DEFCON-style alert system for teaching security.</p>
+          <div class="project-links">
+            <a href="https://github.com/NoamAdept/aTotallyNormalGradebook-">Code</a>
+          </div>
+        </div>
+        <div class="project-card">
+          <h4>SneakyPixel</h4>
+          <p>Flask steganography app to hide/extract encrypted messages in images using custom crypto keys.</p>
+          <div class="project-links">
+            <a href="https://github.com/NoamAdept/sneakyPixels">Code</a>
+          </div>
+        </div>
+        <div class="project-card">
+          <h4>Pwn College CTF</h4>
+          <p>Top-10 finisher in program & system security track; challenges in ROP, shellcode, sandboxing, etc.</p>
+          <div class="project-links">
+            <a href="https://pwn.college/cse466-f2024/">Course</a>
+            <a href="https://pwn.college/program-security/">Track</a>
+            <a href="https://pwn.college/system-security/">Systems</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h2>Contact Me</h2>
+      <form class="contact-form" action="https://formspree.io/f/yourformid" method="POST">
+        <label for="name">Name</label>
+        <input id="name" name="name" required />
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="_replyto" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Noam Yakar · <a href="https://github.com/NoamAdept">GitHub</a> · <a href="#">LinkedIn</a>
+  </footer>
+</body>
+</html>
