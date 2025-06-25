@@ -24,113 +24,99 @@
     }
 
     /* === Base Reset === */
-    *, *::before, *::after {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-    html { scroll-behavior: smooth; font-family: system-ui, sans-serif; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; font-family:system-ui,sans-serif; }
+    body { background:var(--bg); color:var(--text); line-height:1.5; }
     a {
-      color: var(--accent);
-      text-decoration: none;
-      position: relative;
+      color:var(--accent);
+      text-decoration:none;
+      position:relative;
     }
     a::after {
-      content: ""; position: absolute; left:0; bottom:-2px;
+      content:""; position:absolute; left:0; bottom:-2px;
       width:100%; height:2px; background:var(--accent);
-      transform: scaleX(0); transform-origin:left;
-      transition: transform .3s ease;
+      transform:scaleX(0); transform-origin:left;
+      transition:transform .3s ease;
     }
-    a:hover::after { transform: scaleX(1); }
+    a:hover::after { transform:scaleX(1); }
 
     /* === Header & Nav === */
     header {
-      position: sticky; top:0; z-index:100;
-      background: var(--header-bg);
-      backdrop-filter: blur(8px);
-      display: flex; justify-content: space-between; align-items: center;
-      padding: .75rem 1.5rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      position:sticky; top:0; z-index:100;
+      background:var(--header-bg); backdrop-filter:blur(8px);
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.75rem 1.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.05);
     }
-    nav ul {
-      display: flex; gap: 1.5rem;
-    }
-    nav a {
-      padding: .25rem 0; font-weight: 500;
-    }
-    nav a.active {
-      border-bottom: 2px solid var(--accent);
-    }
+    nav ul { display:flex; gap:1.5rem; }
+    nav a { padding:.25rem 0; font-weight:500; }
+    nav a.active { border-bottom:2px solid var(--accent); }
     #theme-toggle, #download-resume {
-      background: none; border: none; cursor: pointer;
-      font-size: 1rem; color: var(--text); margin-left: 1rem;
-      transition: color .3s;
+      background:none; border:none; cursor:pointer;
+      font-size:1rem; color:var(--text); margin-left:1rem;
+      transition:color .3s;
     }
-    #theme-toggle:hover, #download-resume:hover {
-      color: var(--accent);
-    }
+    #theme-toggle:hover, #download-resume:hover { color:var(--accent); }
 
     /* === Sections === */
-    main { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-    section { padding: 4rem 0; scroll-margin-top:4rem; }
+    main { max-width:800px; margin:2rem auto; padding:0 1rem; }
+    section { padding:4rem 0; scroll-margin-top:4rem; }
     section h2 {
-      font-size: 1.75rem; margin-bottom: 1rem;
-      border-bottom: 3px solid var(--accent);
-      display: inline-block;
+      font-size:1.75rem; margin-bottom:1rem;
+      border-bottom:3px solid var(--accent);
+      display:inline-block;
     }
 
     /* === Hero & Typed Effect === */
-    #home {
-      text-align: center;
-    }
+    #home { text-align:center; }
     #typed {
-      margin-top: 1rem;
-      color: var(--accent);
-      font-weight: 500;
-      min-height: 1.5em;
+      margin-top:1rem; color:var(--accent);
+      font-weight:500; min-height:1.5em;
     }
 
-    /* === Project Cards & Filter === */
-    #projects {
-      text-align: center;
-    }
+    /* === Projects & Filter === */
     #project-filter {
-      margin-bottom: 1.5rem;
-      padding: .5rem;
-      border: 1px solid var(--accent);
-      border-radius: 4px;
-      background: var(--card-bg);
+      margin-bottom:1.5rem; padding:.5rem;
+      border:1px solid var(--accent);
+      border-radius:4px; background:var(--card-bg);
     }
     .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-      gap: 1.5rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:1.5rem;
     }
     .project-card {
-      background: var(--card-bg);
-      padding: 1rem;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform .3s, box-shadow .3s;
+      background:var(--card-bg);
+      padding:1rem; border-radius:6px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      transition:transform .3s,box-shadow .3s;
     }
     .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform:translateY(-5px);
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* === GitHub Activity === */
+    #github img {
+      width:100%; max-width:800px; border-radius:6px;
+      margin-bottom:1rem;
+    }
+    #github-events {
+      list-style:none; padding:0;
+    }
+    #github-events li {
+      padding:.5rem 0; border-bottom:1px solid var(--card-bg);
     }
 
     /* === Back to Top === */
     #back-to-top {
-      position: fixed; bottom:2rem; right:2rem;
-      background: var(--accent); color:#fff;
+      position:fixed; bottom:2rem; right:2rem;
+      background:var(--accent); color:#fff;
       border:none; padding:.75rem; border-radius:50%;
       font-size:1.25rem; cursor:pointer;
       display:none; box-shadow:0 2px 6px rgba(0,0,0,0.2);
-      transition: transform .3s;
+      transition:transform .3s;
     }
-    #back-to-top:hover { transform: scale(1.1); }
+    #back-to-top:hover { transform:scale(1.1); }
 
     /* === Print Styles === */
     @media print {
@@ -143,12 +129,12 @@
 </head>
 
 <body>
-
   <header>
     <nav>
       <ul>
         <li><a href="#home" class="active">Home</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#github">GitHub</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -174,7 +160,6 @@
         <option value="data">Data</option>
         <option value="web">Web</option>
       </select>
-
       <div class="projects-grid">
         <div class="project-card" data-category="security">
           <h3>WarGames Gradebook</h3>
@@ -193,6 +178,17 @@
           <p>Top-10 finisher in program & system security track.</p>
         </div>
       </div>
+    </section>
+
+    <!-- GITHUB ACTIVITY -->
+    <section id="github">
+      <h2>GitHub Activity</h2>
+      <!-- Contribution Graph -->
+      <img src="https://ghchart.rshah.org/NoamAdept" alt="GitHub Contribution Graph" />
+      <!-- Recent Events -->
+      <ul id="github-events">
+        <li>Loading activity…</li>
+      </ul>
     </section>
 
     <!-- CONTACT -->
@@ -223,14 +219,14 @@
   <script>
     // 1) Theme toggle
     const themeBtn = document.getElementById('theme-toggle');
-    const current = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', current);
-    themeBtn.textContent = current === 'light' ? '🌙' : '☀️';
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    themeBtn.textContent = saved === 'light' ? '🌙' : '☀️';
     themeBtn.onclick = () => {
-      const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('theme', t);
-      themeBtn.textContent = t === 'light' ? '🌙' : '☀️';
+      const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      themeBtn.textContent = next === 'light' ? '🌙' : '☀️';
     };
 
     // 2) Typed intro
@@ -250,11 +246,11 @@
     const sections = document.querySelectorAll('main section');
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        const id = e.target.getAttribute('id');
+        const id = e.target.id;
         const link = document.querySelector(`nav a[href="#${id}"]`);
         if (e.isIntersecting) {
           navLinks.forEach(a => a.classList.remove('active'));
-          link.classList.add('active');
+          if (link) link.classList.add('active');
         }
       });
     }, { threshold: 0.3 });
@@ -267,7 +263,7 @@
     });
     btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // 5) Download Resume (assumes resume.pdf in same folder)
+    // 5) Download Resume
     document.getElementById('download-resume').onclick = () => {
       const link = document.createElement('a');
       link.href = 'resume.pdf';
@@ -283,6 +279,30 @@
           ? 'block' : 'none';
       });
     };
+
+    // 7) GitHub activity
+    const eventsList = document.getElementById('github-events');
+    fetch('https://api.github.com/users/NoamAdept/events/public')
+      .then(res => res.json())
+      .then(events => {
+        eventsList.innerHTML = '';
+        events.slice(0, 5).forEach(evt => {
+          const li = document.createElement('li');
+          const date = new Date(evt.created_at).toLocaleDateString();
+          let desc = '';
+          switch(evt.type) {
+            case 'PushEvent': desc = `Pushed to ${evt.repo.name}`; break;
+            case 'CreateEvent': desc = `Created ${evt.payload.ref_type} ${evt.payload.ref || ''}`.trim(); break;
+            case 'IssuesEvent': desc = `${evt.payload.action} issue #${evt.payload.issue.number}`; break;
+            default: desc = `${evt.type} on ${evt.repo.name}`;
+          }
+          li.textContent = `${date}: ${desc}`;
+          eventsList.appendChild(li);
+        });
+      })
+      .catch(() => {
+        eventsList.innerHTML = '<li>Unable to load GitHub activity.</li>';
+      });
   </script>
 </body>
 </html>
