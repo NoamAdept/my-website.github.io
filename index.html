@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,21 +7,36 @@
 
   <!-- Google Font & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-mQn+1w5+ZW6nZy4wPazk1f8Gq5gZoI8shhnswSPs1fMcmqJ3v6Pu+0hY5jKGc6IoHl/LvPbG2ZdAlM0J1zYH6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Animate.css for on-load effects -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <!-- AOS for scroll animations -->
+  <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
 
   <style>
-    /* Variables */
+    /* === Theme Variables === */
     :root {
       --bg: #f5f7fa;
+      --heading: #111;
+      --text: #333;
       --accent: #0a66c2;
       --accent-alt: #64ffda;
-      --text: #333;
-      --heading: #111;
-      --light: #555;
       --glass-bg: rgba(255,255,255,0.2);
+      --header-bg: rgba(255,255,255,0.7);
+    }
+    html[data-theme='dark'] {
+      --bg: #121212;
+      --heading: #eee;
+      --text: #ddd;
+      --accent: #bb86fc;
+      --accent-alt: #03dac6;
+      --glass-bg: rgba(18,18,18,0.4);
+      --header-bg: rgba(18,18,18,0.7);
     }
 
-    /* Global */
+    /* === Global Reset & Base === */
     html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -48,36 +63,40 @@
     }
     a:hover::after { transform: scaleX(1); }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
 
-    /* Header */
+    /* === Header + Nav + Theme Toggle === */
     header {
-      background: rgba(255,255,255,0.7);
+      background: var(--header-bg);
       backdrop-filter: saturate(180%) blur(10px);
       padding: 1rem 2rem;
       position: sticky; top: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-      transition: background 0.3s ease;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s;
     }
-    header .logo {
-      font-size: 1.5rem; font-weight: 700; color: var(--heading);
-    }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--heading); }
     nav ul { display: flex; gap: 1.5rem; }
-
-    /* Main & Sections */
-    main { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
-    section {
-      margin: 3rem 0;
-      scroll-snap-align: start;
+    #theme-toggle {
+      background: transparent; border: none;
+      font-size: 1.25rem; cursor: pointer;
+      color: var(--text); transition: color 0.3s;
     }
+    #theme-toggle:hover { color: var(--accent-alt); }
+
+    /* === Particles Background === */
+    .particles-bg {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; z-index: -1;
+    }
+
+    /* === Main & Sections === */
+    main { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
+    section { margin: 3rem 0; scroll-snap-align: start; }
     section h2 {
-      font-size: 1.75rem;
-      color: var(--heading);
-      position: relative;
-      padding-bottom: 0.5rem;
+      font-size: 1.75rem; color: var(--heading);
+      position: relative; padding-bottom: 0.5rem;
       display: inline-block;
     }
     section h2::after {
@@ -88,46 +107,25 @@
       border-radius: 2px;
     }
 
-    /* Hero */
+    /* === Hero with Gradient + Entrance Animations === */
     .hero {
-      position: relative;
-      text-align: center;
-      padding: 6rem 1rem;
-      color: #fff;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(-45deg, var(--accent), var(--accent-alt), var(--accent), var(--accent-alt));
+      position: relative; text-align: center;
+      padding: 6rem 1rem; color: #fff; overflow: hidden;
+      background: linear-gradient(-45deg, var(--accent), var(--accent-alt));
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      mix-blend-mode: overlay;
-      z-index: 0;
     }
-    .hero h1, .hero p, .btn {
-      position: relative; z-index: 1; opacity: 0;
-    }
-    .hero h1 {
-      font-size: 3rem;
-      animation: fadeInDown 1s ease-out forwards;
-    }
+    .hero h1, .hero p, .btn { position: relative; z-index:1; opacity:0; }
+    .hero h1 { font-size: 3rem; animation: fadeInDown 1s ease-out forwards; }
     .hero p {
-      font-size: 1.2rem; margin: 1rem auto;
-      max-width: 600px;
-      animation: fadeInUp 1s 0.5s ease-out forwards;
+      font-size: 1.2rem; margin: 1rem auto; max-width: 600px;
+      animation: fadeInUp 1.2s ease-out forwards;
     }
     .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      border: 2px solid #fff;
-      border-radius: 50px;
-      background: transparent;
-      color: #fff;
-      font-weight: 600;
-      transition: background 0.3s, color 0.3s, transform 0.3s;
-      animation: fadeInUp 1s 1s ease-out forwards;
+      display: inline-block; padding: 0.75rem 1.5rem;
+      border: 2px solid #fff; border-radius:50px; background: transparent;
+      color:#fff; font-weight:600; transition: all 0.3s;
+      animation: fadeInUp 1.4s ease-out forwards;
     }
     .btn:hover {
       background: #fff; color: var(--accent);
@@ -135,128 +133,85 @@
     }
 
     @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% { opacity:0; transform:translateY(-20px); }
+      100% { opacity:1; transform:translateY(0); }
     }
     @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% { opacity:0; transform:translateY(20px); }
+      100% { opacity:1; transform:translateY(0); }
     }
     @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
     }
 
-    /* Glassmorphism Cards */
+    /* === Glassmorphic Cards & Hover Lifts === */
     .education-item, .skill-list-item,
     .experience-item, .project-card,
     .contact-form {
       background: var(--glass-bg);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.3);
-    }
-
-    /* Education & Skills */
-    .resume-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 2rem;
-    }
-    .education-item, .skill-list-item {
-      padding: 1rem; border-radius: 8px;
+      border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1rem; transition: transform 0.3s, box-shadow 0.3s;
     }
-
-    /* Experience */
-    .experience-item {
-      padding: 1rem 1.5rem;
-      border-left: 4px solid var(--accent);
-      margin-bottom: 1.5rem;
-      border-radius: 0 8px 8px 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    /* Projects */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
-      gap: 1.5rem;
-    }
-    .project-card {
-      padding: 1rem; border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .project-card:hover {
-      transform: translateY(-10px) scale(1.03);
+    .project-card:hover,
+    .experience-item:hover {
+      transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
-    .project-card h4 { margin-bottom: 0.5rem; color: var(--heading); }
-    .project-card p { font-size: 0.95rem; color: var(--light); margin-bottom: 0.75rem; }
 
-    /* Contact */
-    .contact-form {
-      padding: 1.5rem; border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* === Grid Layouts === */
+    .resume-grid,
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 2rem;
     }
-    .contact-form label {
-      display: block; margin-bottom: 0.25rem; font-weight: 600;
-    }
-    .contact-form input,
-    .contact-form textarea {
-      width: 100%; padding: 0.6rem; margin-bottom: 1rem;
-      border: 1px solid #ccc; border-radius: 4px;
-    }
-    /* Ripple effect */
+
+    /* === Contact Ripple Button === */
     .contact-form button {
       position: relative; overflow: hidden;
       background: var(--accent); color: #fff;
       padding: 0.6rem 1.2rem; border: none; border-radius: 4px;
-      cursor: pointer; transition: transform 0.3s;
-    }
-    .contact-form button:hover {
-      transform: translateY(-2px);
+      cursor: pointer;
     }
     .contact-form button::after {
       content: '';
       position: absolute; width: 100px; height: 100px;
       background: rgba(255,255,255,0.4);
-      border-radius: 50%;
-      transform: scale(0); opacity: 0;
-      transition: transform 0.5s, opacity 1s;
-      pointer-events: none;
-      left: 50%; top: 50%;
-      transform-origin: center;
+      border-radius: 50%; transform: scale(0); opacity: 0;
+      transition: transform 0.5s, opacity 1s; pointer-events: none;
+      left:50%; top:50%; transform-origin: center;
     }
     .contact-form button:active::after {
-      transform: scale(1); opacity: 1;
-      transition: 0s;
+      transform: scale(1); opacity: 1; transition: 0s;
     }
 
-    /* Footer */
+    /* === Footer === */
     footer {
       text-align: center;
       margin: 3rem 0 1rem;
-      font-size: 0.9rem; color: var(--light);
+      font-size: 0.9rem;
+      color: var(--text);
     }
     footer a {
-      margin: 0 0.5rem; color: var(--accent-alt);
+      margin: 0 0.5rem;
+      color: var(--accent-alt);
       transition: transform 0.3s ease;
     }
-    footer a:hover {
-      transform: translateY(-3px);
-    }
+    footer a:hover { transform: translateY(-3px); }
   </style>
-
-  <!-- AOS CSS & JS -->
-  <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
-  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => AOS.init({ duration: 800, once: true }));</script>
 </head>
 
 <body>
-  <header>
+  <!-- Particles Container -->
+  <div id="tsparticles" class="particles-bg"></div>
+
+  <!-- Header with theme toggle -->
+  <header class="animate__animated animate__fadeInDown">
     <div class="logo">Noam Yakar</div>
     <nav>
       <ul>
@@ -267,17 +222,20 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
+    <button id="theme-toggle" aria-label="Toggle Theme">
+      <i class="fas fa-moon"></i>
+    </button>
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- Hero -->
     <section class="hero" id="home" data-aos="fade-up">
       <h1>Hi, I’m Noam Yakar</h1>
       <p>Summa Cum Laude CS & Math grad from ASU. I build data-driven tools, secure systems, and visualizations.</p>
       <a href="#projects" class="btn">View Projects</a>
     </section>
 
-    <!-- EDUCATION -->
+    <!-- Education -->
     <section id="education" data-aos="fade-up">
       <h2>Education</h2>
       <div class="resume-grid">
@@ -288,46 +246,39 @@
              <strong>BSc Mathematics</strong> (Statistics Focus)<br>
              <strong>GPA:</strong> 4.0, Summa Cum Laude</p>
           <p><strong>Key Coursework:</strong><br>
-             Real Analysis · Advanced Linear Algebra · Mathematical Statistics · Data Structures & Algorithms ·
-             Operating Systems · Stochastic Processes · Cryptography · Networks & Security · Digital Forensics
+             Real Analysis · Advanced Linear Algebra · Mathematical Statistics<br>
+             Data Structures & Algorithms · Operating Systems · Stochastic Processes<br>
+             Cryptography · Networks & Security · Digital Forensics
           </p>
         </div>
       </div>
     </section>
 
-    <!-- SKILLS -->
+    <!-- Skills -->
     <section id="skills" data-aos="fade-up">
       <h2>Technical Skills</h2>
       <div class="resume-grid">
         <div class="skill-list-item">
           <h3>Languages & Databases</h3>
-          <ul>
-            <li>Python · R · SAS · C/C++ · SQL · Linux</li>
-          </ul>
+          <ul><li>Python · R · SAS · C/C++ · SQL · Linux</li></ul>
         </div>
         <div class="skill-list-item">
           <h3>Libraries & Tools</h3>
-          <ul>
-            <li>TensorFlow · Keras · PyTorch · Scikit-Learn · Shiny · ggplot2 · Pwntools</li>
-          </ul>
+          <ul><li>TensorFlow · Keras · PyTorch · Scikit-Learn · Shiny · ggplot2 · Pwntools</li></ul>
         </div>
         <div class="skill-list-item">
           <h3>Platforms & Services</h3>
-          <ul>
-            <li>Databricks · AWS · GATK · DeepVariant · BWA-Mem · Snakemake</li>
-          </ul>
+          <ul><li>Databricks · AWS · GATK · DeepVariant · BWA-Mem · Snakemake</li></ul>
         </div>
         <div class="skill-list-item">
           <h3>Security Competencies</h3>
-          <ul>
-            <li>Buffer Overflows · ROP · Shellcode Injection · Race Conditions · Kernel Exploits · Sandboxing ·
-            Micro-architecture Attacks</li>
-          </ul>
+          <ul><li>Buffer Overflows · ROP · Shellcode Injection · Race Conditions<br>
+            Kernel Exploits · Sandboxing · Micro-architecture Attacks</li></ul>
         </div>
       </div>
     </section>
 
-    <!-- EXPERIENCE -->
+    <!-- Experience -->
     <section id="experience" data-aos="fade-up">
       <h2>Experience</h2>
 
@@ -335,9 +286,9 @@
         <h3>Data Engineering Intern, Nike</h3>
         <span>Oregon | Jun 2024 – Aug 2024</span>
         <ul>
-          <li>Built and optimized data pipelines for seamless integration across systems.</li>
-          <li>Collaborated on ML-driven analytics to support data-informed decisions.</li>
-          <li>Implemented data validation protocols ensuring high data quality.</li>
+          <li>Built and optimized data pipelines for seamless integration.</li>
+          <li>Collaborated on ML analytics to support data-informed decisions.</li>
+          <li>Implemented validation protocols ensuring high data quality.</li>
         </ul>
       </div>
 
@@ -345,8 +296,8 @@
         <h3>Statistical Modeling Analyst, ASU</h3>
         <span>Arizona | Aug 2023 – May 2024</span>
         <ul>
-          <li>Developed ARIMA and Holt-Winters models to forecast financial time series.</li>
-          <li>Automated forecasting pipelines that improved reporting speed by 30%.</li>
+          <li>Developed ARIMA & Holt-Winters models to forecast financial series.</li>
+          <li>Automated pipelines, boosting report speed by 30%.</li>
         </ul>
       </div>
 
@@ -354,72 +305,101 @@
         <h3>Cybersecurity Data Intern, Radware Inc.</h3>
         <span>Tel Aviv | Jun 2023 – Aug 2023</span>
         <ul>
-          <li>Built a unit-testing framework for a client alerts REST API.</li>
-          <li>Applied PCA, t-SNE, UMAP for clustering cyber-attack datasets.</li>
-          <li>Tuned XGBoost/RF models to classify attack types with 92% accuracy.</li>
+          <li>Built a unit-testing framework for a client alerts API.</li>
+          <li>Applied PCA, t-SNE, UMAP to cluster cyber-attack datasets.</li>
+          <li>Tuned XGBoost/RF models to 92% classification accuracy.</li>
         </ul>
       </div>
     </section>
 
-    <!-- PROJECTS -->
+    <!-- Projects -->
     <section id="projects" data-aos="fade-up">
       <h2>Projects</h2>
       <div class="projects-grid">
         <div class="project-card">
           <h4>Privacy Preserving Tool</h4>
-          <p>Flask & Vega-Lite editor for k-anonymity, l-diversity, t-closeness, differential privacy metrics.</p>
-          <div class="project-links">
-            <a href="#">Private Repo</a>
-          </div>
+          <p>Flask & Vega-Lite editor for k-anonymity, l-diversity, t-closeness, differential privacy.</p>
+          <a href="#" class="btn">Repo</a>
         </div>
         <div class="project-card">
           <h4>WarGames: Secure Gradebook</h4>
-          <p>CTF-style Python tool with format-string exploits & DEFCON-style alert system for teaching security.</p>
-          <div class="project-links">
-            <a href="https://github.com/NoamAdept/aTotallyNormalGradebook-">Code</a>
-          </div>
+          <p>CTF-style Python tool with format-string exploits & DEFCON alerts for teaching security.</p>
+          <a href="https://github.com/NoamAdept/aTotallyNormalGradebook-" class="btn">Code</a>
         </div>
         <div class="project-card">
           <h4>SneakyPixel</h4>
           <p>Flask steganography app to hide/extract encrypted messages in images using custom crypto keys.</p>
-          <div class="project-links">
-            <a href="https://github.com/NoamAdept/sneakyPixels">Code</a>
-          </div>
+          <a href="https://github.com/NoamAdept/sneakyPixels" class="btn">Code</a>
         </div>
         <div class="project-card">
           <h4>Pwn College CTF</h4>
-          <p>Top-10 finisher in program & system security track; challenges in ROP, shellcode, sandboxing, etc.</p>
-          <div class="project-links">
-            <a href="https://pwn.college/cse466-f2024/">Course</a>
-            <a href="https://pwn.college/program-security/">Track</a>
-            <a href="https://pwn.college/system-security/">Systems</a>
-          </div>
+          <p>Top-10 finisher in program & system security track: ROP, shellcode, sandboxing, etc.</p>
+          <a href="https://pwn.college/cse466-f2024/" class="btn">Course</a>
         </div>
       </div>
     </section>
 
-    <!-- CONTACT -->
+    <!-- Contact -->
     <section id="contact" data-aos="fade-up">
       <h2>Contact Me</h2>
       <form class="contact-form" action="https://formspree.io/f/yourformid" method="POST">
         <label for="name">Name</label>
         <input id="name" name="name" required />
-
         <label for="email">Email</label>
         <input id="email" type="email" name="_replyto" required />
-
         <label for="message">Message</label>
         <textarea id="message" name="message" rows="5" required></textarea>
-
         <button type="submit">Send Message</button>
       </form>
     </section>
   </main>
 
+  <!-- Footer -->
   <footer>
     &copy; 2025 Noam Yakar ·
     <a href="https://github.com/NoamAdept"><i class="fab fa-github"></i></a>
     <a href="#"><i class="fab fa-linkedin"></i></a>
   </footer>
+
+  <!-- AOS & tsParticles & Theme Toggle Script -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1️⃣ Theme Toggle
+      const toggle = document.getElementById('theme-toggle');
+      const icon = toggle.querySelector('i');
+      const saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      icon.className = document.documentElement.getAttribute('data-theme') === 'light'
+        ? 'fas fa-moon'
+        : 'fas fa-sun';
+      toggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        icon.className = next === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      });
+
+      // 2️⃣ AOS Init
+      AOS.init({ duration: 800, once: true });
+
+      // 3️⃣ Particles Init
+      tsParticles.load("tsparticles", {
+        fullScreen: { enable: false },
+        particles: {
+          number: { value: 60, density: { enable: true, area: 800 } },
+          color: { value: "#64ffda" },
+          shape: { type: "circle" },
+          opacity: { value: 0.5 },
+          size: { value: { min: 1, max: 3 } },
+          move: { enable: true, speed: 1, outModes: { default: "bounce" } },
+          links: { enable: true, distance: 150, color: "#64ffda", opacity: 0.4, width: 1 }
+        },
+        detectRetina: true
+      });
+    });
+  </script>
 </body>
 </html>
