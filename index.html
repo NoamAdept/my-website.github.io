@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Noam Yakar – Interactive Portfolio & Resume</title>
+  <title>Noam Yakar – Portfolio & Resume</title>
 
   <!-- Minimal Reset + Font -->
   <style>
@@ -27,7 +28,11 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; font-family:system-ui,sans-serif; }
     body { background:var(--bg); color:var(--text); line-height:1.5; }
-    a { color:var(--accent); text-decoration:none; position:relative; }
+    a {
+      color:var(--accent);
+      text-decoration:none;
+      position:relative;
+    }
     a::after {
       content:""; position:absolute; left:0; bottom:-2px;
       width:100%; height:2px; background:var(--accent);
@@ -106,12 +111,20 @@
     .timeline-item h3 { margin-bottom:.25rem; font-size:1rem; }
     .timeline-item p  { font-size:.9rem; color:var(--text); }
 
-    /* === Game Container === */
-    #game { text-align:center; }
-    #game-container {
-      width:100%; height:600px; margin:1rem auto;
-      border:2px solid var(--accent); border-radius:8px;
+    /* === Videos === */
+    #videos .video-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:1rem;
+    }
+    .video-card {
       background:var(--card-bg);
+      border-radius:6px;
+      overflow:hidden;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
+    .video-card iframe {
+      width:100%; height:200px; border:0;
     }
 
     /* === Projects & Filter === */
@@ -165,9 +178,8 @@
     }
   </style>
 
-  <!-- Chart.js & Phaser 3 CDN -->
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
 </head>
 
 <body>
@@ -177,7 +189,7 @@
         <li><a href="#home" class="active">Home</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#timeline">Timeline</a></li>
-        <li><a href="#game">Game</a></li>
+        <li><a href="#videos">Videos</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#github">GitHub</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -224,15 +236,23 @@
         </div>
         <div class="timeline-item">
           <h3>2021–2025</h3>
-          <p>BSc CS & Math, ASU</p>
+          <p>BSc CS & Math, Arizona State University</p>
         </div>
       </div>
     </section>
 
-    <!-- GAME -->
-    <section id="game">
-      <h2>Journey Game</h2>
-      <div id="game-container"></div>
+    <!-- VIDEOS -->
+    <section id="videos">
+      <h2>Videos</h2>
+      <div class="video-grid">
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed?listType=user_uploads&list=NoamYak"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
     </section>
 
     <!-- PROJECTS -->
@@ -268,7 +288,9 @@
     <section id="github">
       <h2>GitHub Activity</h2>
       <img src="https://ghchart.rshah.org/NoamAdept" alt="GitHub Contribution Graph" />
-      <ul id="github-events"><li>Loading activity…</li></ul>
+      <ul id="github-events">
+        <li>Loading activity…</li>
+      </ul>
     </section>
 
     <!-- CONTACT -->
@@ -277,17 +299,17 @@
       <form action="https://formspree.io/f/yourformid" method="POST">
         <label>
           <span>Name</span><br/>
-          <input type="text" name="name" required style="width:100%;padding:.5rem;margin:.5rem 0;border:1px solid var(--accent);border-radius:4px;">
+          <input type="text" name="name" required style="width:100%; padding:.5rem; margin:.5rem 0; border:1px solid var(--accent); border-radius:4px;">
         </label><br/>
         <label>
           <span>Email</span><br/>
-          <input type="email" name="_replyto" required style="width:100%;padding:.5rem;margin:.5rem 0;border:1px solid var(--accent);border-radius:4px;">
+          <input type="email" name="_replyto" required style="width:100%; padding:.5rem; margin:.5rem 0; border:1px solid var(--accent); border-radius:4px;">
         </label><br/>
         <label>
           <span>Message</span><br/>
-          <textarea name="message" rows="4" required style="width:100%;padding:.5rem;margin:.5rem 0;border:1px solid var(--accent);border-radius:4px;"></textarea>
+          <textarea name="message" rows="4" required style="width:100%; padding:.5rem; margin:.5rem 0; border:1px solid var(--accent); border-radius:4px;"></textarea>
         </label><br/>
-        <button type="submit" style="padding:.75rem 1.5rem;border:none;background:var(--accent);color:#fff;border-radius:4px;cursor:pointer;">
+        <button type="submit" style="padding:.75rem 1.5rem; border:none; background:var(--accent); color:#fff; border-radius:4px; cursor:pointer;">
           Send
         </button>
       </form>
@@ -397,7 +419,7 @@
         { id:'home', xp:10, emoji:'🏠', name:'Explorer' },
         { id:'skills', xp:15, emoji:'🔧', name:'Skilled' },
         { id:'timeline', xp:15, emoji:'🗓️', name:'Historian' },
-        { id:'game', xp:25, emoji:'🎮', name:'Gamer' },
+        { id:'videos', xp:20, emoji:'📺', name:'Viewer' },
         { id:'projects', xp:20, emoji:'🚀', name:'Builder' },
         { id:'github', xp:15, emoji:'🐙', name:'Contributor' },
         { id:'contact', xp:10, emoji:'📬', name:'Connector' }
@@ -405,114 +427,40 @@
       const xpEl = document.getElementById('xp-count'), badgesEl = document.getElementById('badges');
       let unlocked = JSON.parse(localStorage.getItem('unlockedSections')||'[]');
       let xp = unlocked.reduce((sum,id)=>{
-        const s=sections.find(s=>s.id===id);
+        const s = sections.find(s=>s.id===id);
         return sum + (s?s.xp:0);
       },0);
       xpEl.textContent = xp;
       unlocked.forEach(id=>{
-        const s=sections.find(s=>s.id===id);
+        const s = sections.find(s=>s.id===id);
         s && addBadge(s,false);
       });
       const obs = new IntersectionObserver(entries=>{
         entries.forEach(e=>{
           if(e.isIntersecting){
-            const sec=sections.find(s=>s.id===e.target.id);
+            const sec = sections.find(s=>s.id===e.target.id);
             if(sec && !unlocked.includes(sec.id)){
               unlocked.push(sec.id);
-              localStorage.setItem('unlockedSections',JSON.stringify(unlocked));
+              localStorage.setItem('unlockedSections', JSON.stringify(unlocked));
               xp += sec.xp; xpEl.textContent = xp;
               addBadge(sec,true);
             }
           }
         });
-      },{ threshold:0.6 });
+      }, { threshold: 0.6 });
       sections.forEach(s=>{
-        const el=document.getElementById(s.id);
+        const el = document.getElementById(s.id);
         el && obs.observe(el);
       });
       function addBadge({emoji,name},animate){
-        const b=document.createElement('span');
-        b.className='badge'; b.title=name; b.textContent=emoji;
+        const b = document.createElement('span');
+        b.className = 'badge'; b.title = name; b.textContent = emoji;
         badgesEl.appendChild(b);
         if(animate) requestAnimationFrame(()=>b.classList.add('unlocked'));
         else b.classList.add('unlocked');
       }
     })();
-
-    // Phaser Game
-    window.addEventListener('load', () => {
-      const config = {
-        type: Phaser.AUTO,
-        width: 800, height: 600,
-        parent: 'game-container',
-        physics: { default: 'arcade' },
-        scene: { preload, create, update }
-      };
-      new Phaser.Game(config);
-
-      function preload() {
-        // no assets needed
-      }
-
-      function create() {
-        // player
-        this.player = this.add.rectangle(400, 550, 40, 40, 0x00ff00);
-        this.physics.add.existing(this.player);
-        this.player.body.setCollideWorldBounds(true);
-
-        // controls
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        // lanes
-        const lanes = [
-          { y: 450, speed: 100, label: 'Cybersecurity Intern' },
-          { y: 350, speed: -120, label: 'Stats Analyst' },
-          { y: 250, speed: 140, label: 'Data Intern' },
-          { y: 150, speed: -160, label: 'ASU Graduate' }
-        ];
-        this.obstacles = this.physics.add.group({ allowGravity: false, immovable: true });
-
-        lanes.forEach(lane => {
-          this.add.text(10, lane.y - 20, lane.label, { fontSize: '16px', fill: '#000' });
-          for (let i = 0; i < 5; i++) {
-            const x = Phaser.Math.Between(0, 800);
-            const rect = this.add.rectangle(x, lane.y, 80, 40, 0xff0000);
-            this.physics.add.existing(rect);
-            rect.body.setVelocityX(lane.speed);
-            rect.body.setImmovable(true);
-            this.obstacles.add(rect);
-          }
-        });
-
-        this.physics.add.collider(this.player, this.obstacles, () => this.resetPlayer(), null, this);
-      }
-
-      function update() {
-        const p = this.player.body;
-        p.setVelocity(0);
-        if (this.cursors.left.isDown) p.setVelocityX(-200);
-        else if (this.cursors.right.isDown) p.setVelocityX(200);
-        if (this.cursors.up.isDown) p.setVelocityY(-200);
-        else if (this.cursors.down.isDown) p.setVelocityY(200);
-
-        this.obstacles.children.iterate(obs => {
-          if (obs.x > 840 && obs.body.velocity.x > 0) obs.x = -40;
-          else if (obs.x < -40 && obs.body.velocity.x < 0) obs.x = 840;
-        });
-
-        if (this.player.y < 100) {
-          this.scene.pause();
-          alert('🎓 Congratulations! You crossed your journey!');
-          this.resetPlayer();
-          this.scene.resume();
-        }
-      }
-
-      function resetPlayer() {
-        this.player.x = 400;
-        this.player.y = 550;
-      }
-    });
   </script>
 </body>
 </html>
+```
