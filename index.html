@@ -57,6 +57,19 @@
     }
     #theme-toggle:hover, #download-resume:hover { color:var(--accent); }
 
+    /* === Gamification Bar === */
+    #gamification {
+      display:flex; align-items:center; gap:.75rem; font-size:.9rem; margin-left:2rem;
+    }
+    #badges { display:flex; gap:.4rem; }
+    .badge {
+      font-size:1.2rem; opacity:0; transform:scale(.5);
+      transition:opacity .4s ease, transform .4s ease;
+    }
+    .badge.unlocked {
+      opacity:1; transform:scale(1);
+    }
+
     /* === Sections === */
     main { max-width:800px; margin:2rem auto; padding:0 1rem; }
     section { padding:4rem 0; scroll-margin-top:4rem; }
@@ -80,13 +93,11 @@
     /* === Timeline === */
     #timeline { position:relative; }
     #timeline::before {
-      content: ""; position:absolute;
-      left:50%; top:0; bottom:0;
+      content:""; position:absolute; left:50%; top:0; bottom:0;
       width:2px; background:var(--accent);
     }
     .timeline-item {
-      position:relative;
-      width:50%; padding:1rem 2rem;
+      position:relative; width:50%; padding:1rem 2rem;
     }
     .timeline-item:nth-child(odd) {
       left:0; text-align:right;
@@ -95,10 +106,8 @@
       left:50%; text-align:left;
     }
     .timeline-item::before {
-      content:""; position:absolute;
-      top:1.25rem; width:12px; height:12px;
-      border-radius:50%; background:var(--accent);
-      border:2px solid var(--bg);
+      content:""; position:absolute; top:1.25rem; width:12px; height:12px;
+      border-radius:50%; background:var(--accent); border:2px solid var(--bg);
     }
     .timeline-item:nth-child(odd)::before {
       right:-8px;
@@ -153,7 +162,7 @@
 
     /* === Print Styles === */
     @media print {
-      header, #back-to-top, #theme-toggle, #download-resume, #project-filter { display:none; }
+      header, #back-to-top, #theme-toggle, #download-resume, #project-filter, #gamification { display:none; }
       body { background:#fff; color:#000; }
       section { padding:0; margin:0; }
       a::after { display:none; }
@@ -176,9 +185,13 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
-    <div>
+    <div style="display:flex; align-items:center;">
       <button id="download-resume" title="Download Resume">📄</button>
       <button id="theme-toggle" title="Toggle Dark/Light">🌙</button>
+      <div id="gamification">
+        <span>XP: <strong id="xp-count">0</strong></span>
+        <div id="badges"></div>
+      </div>
     </div>
   </header>
 
@@ -280,11 +293,11 @@
   <button id="back-to-top" title="Back to top">↑</button>
 
   <script>
-    // Theme toggle
+    // 1) Theme toggle
     const themeBtn = document.getElementById('theme-toggle');
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    themeBtn.textContent = saved === 'light' ? '🌙' : '☀️';
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeBtn.textContent = savedTheme === 'light' ? '🌙' : '☀️';
     themeBtn.onclick = () => {
       const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
@@ -292,18 +305,19 @@
       themeBtn.textContent = next === 'light' ? '🌙' : '☀️';
     };
 
-    // Typed intro
-    const text = 'Summa Cum Laude CS & Math Graduate • Builder of Data Tools & Secure Apps';
-    let i = 0; const typedEl = document.getElementById('typed');
+    // 2) Typed intro
+    const introText = 'Summa Cum Laude CS & Math Graduate • Builder of Data Tools & Secure Apps';
+    let idx = 0;
+    const typedEl = document.getElementById('typed');
     function type() {
-      if (i < text.length) {
-        typedEl.textContent += text[i++];
+      if (idx < introText.length) {
+        typedEl.textContent += introText[idx++];
         setTimeout(type, 80);
       }
     }
     document.addEventListener('DOMContentLoaded', type);
 
-    // Active nav on scroll
+    // 3) Active nav on scroll
     const navLinks = document.querySelectorAll('nav a');
     document.querySelectorAll('main section').forEach(sec => {
       new IntersectionObserver(entries => {
@@ -317,12 +331,12 @@
       }, { threshold: 0.3 }).observe(sec);
     });
 
-    // Back to Top
-    const btn = document.getElementById('back-to-top');
-    window.addEventListener('scroll', () => btn.style.display = window.scrollY > 300 ? 'block' : 'none');
-    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 4) Back to Top
+    const backBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => backBtn.style.display = window.scrollY > 300 ? 'block' : 'none');
+    backBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Download Resume
+    // 5) Download Resume
     document.getElementById('download-resume').onclick = () => {
       const link = document.createElement('a');
       link.href = 'resume.pdf';
@@ -330,7 +344,7 @@
       link.click();
     };
 
-    // Project Filter
+    // 6) Project Filter
     document.getElementById('project-filter').onchange = e => {
       const val = e.target.value;
       document.querySelectorAll('.project-card').forEach(card => {
@@ -338,7 +352,7 @@
       });
     };
 
-    // GitHub activity
+    // 7) GitHub activity
     fetch('https://api.github.com/users/NoamAdept/events/public')
       .then(res => res.json()).then(events => {
         const list = document.getElementById('github-events');
@@ -359,7 +373,7 @@
       })
       .catch(_=> document.getElementById('github-events').innerHTML = '<li>Couldn’t load GitHub activity.</li>');
 
-    // Skills Chart (Chart.js)
+    // 8) Skills Chart (Chart.js)
     document.addEventListener('DOMContentLoaded', () => {
       new Chart(document.getElementById('skills-chart'), {
         type: 'radar',
@@ -378,6 +392,55 @@
         }
       });
     });
+
+    // 9) Gamification
+    (function(){
+      const sections = [
+        { id:'home', xp:10, emoji:'🏠', name:'Explorer' },
+        { id:'skills', xp:15, emoji:'🔧', name:'Skilled' },
+        { id:'timeline', xp:15, emoji:'🗓️', name:'Historian' },
+        { id:'projects', xp:20, emoji:'🚀', name:'Builder' },
+        { id:'github', xp:15, emoji:'🐙', name:'Contributor' },
+        { id:'contact', xp:10, emoji:'📬', name:'Connector' }
+      ];
+      const xpEl = document.getElementById('xp-count');
+      const badgesEl = document.getElementById('badges');
+      let unlocked = JSON.parse(localStorage.getItem('unlockedSections')||'[]');
+      let xp = unlocked.reduce((sum,id)=>{
+        const s=sections.find(s=>s.id===id);
+        return sum + (s?s.xp:0);
+      },0);
+      xpEl.textContent = xp;
+      unlocked.forEach(id=>{
+        const s=sections.find(s=>s.id===id);
+        if(s) addBadge(s,false);
+      });
+      const obs = new IntersectionObserver(entries=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            const sec=sections.find(s=>s.id===e.target.id);
+            if(sec && !unlocked.includes(sec.id)){
+              unlocked.push(sec.id);
+              localStorage.setItem('unlockedSections',JSON.stringify(unlocked));
+              xp += sec.xp;
+              xpEl.textContent = xp;
+              addBadge(sec,true);
+            }
+          }
+        });
+      },{ threshold:0.6 });
+      sections.forEach(s=>{
+        const el=document.getElementById(s.id);
+        if(el) obs.observe(el);
+      });
+      function addBadge({emoji,name},animate){
+        const b=document.createElement('span');
+        b.className='badge'; b.title=name; b.textContent=emoji;
+        badgesEl.appendChild(b);
+        if(animate) requestAnimationFrame(()=>b.classList.add('unlocked'));
+        else b.classList.add('unlocked');
+      }
+    })();
   </script>
 </body>
 </html>
