@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Noam Yakar – Portfolio & Resume</title>
+  <title>Noam Yakar – Interactive Portfolio & Resume</title>
 
   <!-- Minimal Reset + Font -->
   <style>
@@ -27,11 +27,7 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; font-family:system-ui,sans-serif; }
     body { background:var(--bg); color:var(--text); line-height:1.5; }
-    a {
-      color:var(--accent);
-      text-decoration:none;
-      position:relative;
-    }
+    a { color:var(--accent); text-decoration:none; position:relative; }
     a::after {
       content:""; position:absolute; left:0; bottom:-2px;
       width:100%; height:2px; background:var(--accent);
@@ -99,30 +95,30 @@
     .timeline-item {
       position:relative; width:50%; padding:1rem 2rem;
     }
-    .timeline-item:nth-child(odd) {
-      left:0; text-align:right;
-    }
-    .timeline-item:nth-child(even) {
-      left:50%; text-align:left;
-    }
+    .timeline-item:nth-child(odd) { left:0; text-align:right; }
+    .timeline-item:nth-child(even) { left:50%; text-align:left; }
     .timeline-item::before {
       content:""; position:absolute; top:1.25rem; width:12px; height:12px;
       border-radius:50%; background:var(--accent); border:2px solid var(--bg);
     }
-    .timeline-item:nth-child(odd)::before {
-      right:-8px;
-    }
-    .timeline-item:nth-child(even)::before {
-      left:-8px;
-    }
+    .timeline-item:nth-child(odd)::before { right:-8px; }
+    .timeline-item:nth-child(even)::before { left:-8px; }
     .timeline-item h3 { margin-bottom:.25rem; font-size:1rem; }
     .timeline-item p  { font-size:.9rem; color:var(--text); }
+
+    /* === Game Container === */
+    #game { text-align:center; }
+    #game-container {
+      width:100%; height:600px; margin:1rem auto;
+      border:2px solid var(--accent); border-radius:8px;
+      background:var(--card-bg);
+    }
 
     /* === Projects & Filter === */
     #project-filter {
       margin-bottom:1.5rem; padding:.5rem;
-      border:1px solid var(--accent);
-      border-radius:4px; background:var(--card-bg);
+      border:1px solid var(--accent); border-radius:4px;
+      background:var(--card-bg);
     }
     .projects-grid {
       display:grid;
@@ -169,8 +165,9 @@
     }
   </style>
 
-  <!-- Chart.js CDN -->
+  <!-- Chart.js & Phaser 3 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
 </head>
 
 <body>
@@ -180,6 +177,7 @@
         <li><a href="#home" class="active">Home</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#timeline">Timeline</a></li>
+        <li><a href="#game">Game</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#github">GitHub</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -213,22 +211,28 @@
       <h2>Timeline</h2>
       <div class="timeline">
         <div class="timeline-item">
-          <h3>Jun 2024 – Aug 2024</h3>
+          <h3>Jun 2024–Aug 2024</h3>
           <p>Data Engineering Intern, Nike</p>
         </div>
         <div class="timeline-item">
-          <h3>Aug 2023 – May 2024</h3>
+          <h3>Aug 2023–May 2024</h3>
           <p>Statistical Modeling Analyst, ASU</p>
         </div>
         <div class="timeline-item">
-          <h3>Jun 2023 – Aug 2023</h3>
+          <h3>Jun 2023–Aug 2023</h3>
           <p>Cybersecurity Data Intern, Radware Inc.</p>
         </div>
         <div class="timeline-item">
-          <h3>2021 – 2025</h3>
-          <p>BSc CS & Math, Arizona State University</p>
+          <h3>2021–2025</h3>
+          <p>BSc CS & Math, ASU</p>
         </div>
       </div>
+    </section>
+
+    <!-- GAME -->
+    <section id="game">
+      <h2>Journey Game</h2>
+      <div id="game-container"></div>
     </section>
 
     <!-- PROJECTS -->
@@ -293,7 +297,7 @@
   <button id="back-to-top" title="Back to top">↑</button>
 
   <script>
-    // 1) Theme toggle
+    // Theme toggle
     const themeBtn = document.getElementById('theme-toggle');
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -305,10 +309,9 @@
       themeBtn.textContent = next === 'light' ? '🌙' : '☀️';
     };
 
-    // 2) Typed intro
+    // Typed intro
     const introText = 'Summa Cum Laude CS & Math Graduate • Builder of Data Tools & Secure Apps';
-    let idx = 0;
-    const typedEl = document.getElementById('typed');
+    let idx = 0, typedEl = document.getElementById('typed');
     function type() {
       if (idx < introText.length) {
         typedEl.textContent += introText[idx++];
@@ -317,26 +320,25 @@
     }
     document.addEventListener('DOMContentLoaded', type);
 
-    // 3) Active nav on scroll
-    const navLinks = document.querySelectorAll('nav a');
+    // Active nav on scroll
     document.querySelectorAll('main section').forEach(sec => {
       new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
-            navLinks.forEach(a => a.classList.remove('active'));
-            const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
-            if (link) link.classList.add('active');
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            const a = document.querySelector(`nav a[href="#${e.target.id}"]`);
+            a && a.classList.add('active');
           }
         });
       }, { threshold: 0.3 }).observe(sec);
     });
 
-    // 4) Back to Top
+    // Back to Top
     const backBtn = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => backBtn.style.display = window.scrollY > 300 ? 'block' : 'none');
     backBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // 5) Download Resume
+    // Download Resume
     document.getElementById('download-resume').onclick = () => {
       const link = document.createElement('a');
       link.href = 'resume.pdf';
@@ -344,17 +346,16 @@
       link.click();
     };
 
-    // 6) Project Filter
+    // Project Filter
     document.getElementById('project-filter').onchange = e => {
-      const val = e.target.value;
       document.querySelectorAll('.project-card').forEach(card => {
-        card.style.display = (val === 'all' || card.dataset.category === val) ? 'block' : 'none';
+        card.style.display = (e.target.value === 'all' || card.dataset.category === e.target.value) ? 'block' : 'none';
       });
     };
 
-    // 7) GitHub activity
+    // GitHub activity
     fetch('https://api.github.com/users/NoamAdept/events/public')
-      .then(res => res.json()).then(events => {
+      .then(r => r.json()).then(events => {
         const list = document.getElementById('github-events');
         list.innerHTML = '';
         events.slice(0,5).forEach(evt => {
@@ -371,9 +372,9 @@
           list.appendChild(li);
         });
       })
-      .catch(_=> document.getElementById('github-events').innerHTML = '<li>Couldn’t load GitHub activity.</li>');
+      .catch(_ => document.getElementById('github-events').innerHTML = '<li>Couldn’t load GitHub activity.</li>');
 
-    // 8) Skills Chart (Chart.js)
+    // Skills Chart (Chart.js)
     document.addEventListener('DOMContentLoaded', () => {
       new Chart(document.getElementById('skills-chart'), {
         type: 'radar',
@@ -386,25 +387,22 @@
             borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
           }]
         },
-        options: {
-          scales: { r: { beginAtZero:true, max:100 } },
-          plugins: { legend: { display:false } }
-        }
+        options: { scales:{ r:{ beginAtZero:true, max:100 }}, plugins:{ legend:{ display:false } } }
       });
     });
 
-    // 9) Gamification
+    // Gamification
     (function(){
       const sections = [
         { id:'home', xp:10, emoji:'🏠', name:'Explorer' },
         { id:'skills', xp:15, emoji:'🔧', name:'Skilled' },
         { id:'timeline', xp:15, emoji:'🗓️', name:'Historian' },
+        { id:'game', xp:25, emoji:'🎮', name:'Gamer' },
         { id:'projects', xp:20, emoji:'🚀', name:'Builder' },
         { id:'github', xp:15, emoji:'🐙', name:'Contributor' },
         { id:'contact', xp:10, emoji:'📬', name:'Connector' }
       ];
-      const xpEl = document.getElementById('xp-count');
-      const badgesEl = document.getElementById('badges');
+      const xpEl = document.getElementById('xp-count'), badgesEl = document.getElementById('badges');
       let unlocked = JSON.parse(localStorage.getItem('unlockedSections')||'[]');
       let xp = unlocked.reduce((sum,id)=>{
         const s=sections.find(s=>s.id===id);
@@ -413,7 +411,7 @@
       xpEl.textContent = xp;
       unlocked.forEach(id=>{
         const s=sections.find(s=>s.id===id);
-        if(s) addBadge(s,false);
+        s && addBadge(s,false);
       });
       const obs = new IntersectionObserver(entries=>{
         entries.forEach(e=>{
@@ -422,8 +420,7 @@
             if(sec && !unlocked.includes(sec.id)){
               unlocked.push(sec.id);
               localStorage.setItem('unlockedSections',JSON.stringify(unlocked));
-              xp += sec.xp;
-              xpEl.textContent = xp;
+              xp += sec.xp; xpEl.textContent = xp;
               addBadge(sec,true);
             }
           }
@@ -431,7 +428,7 @@
       },{ threshold:0.6 });
       sections.forEach(s=>{
         const el=document.getElementById(s.id);
-        if(el) obs.observe(el);
+        el && obs.observe(el);
       });
       function addBadge({emoji,name},animate){
         const b=document.createElement('span');
@@ -441,6 +438,81 @@
         else b.classList.add('unlocked');
       }
     })();
+
+    // Phaser Game
+    window.addEventListener('load', () => {
+      const config = {
+        type: Phaser.AUTO,
+        width: 800, height: 600,
+        parent: 'game-container',
+        physics: { default: 'arcade' },
+        scene: { preload, create, update }
+      };
+      new Phaser.Game(config);
+
+      function preload() {
+        // no assets needed
+      }
+
+      function create() {
+        // player
+        this.player = this.add.rectangle(400, 550, 40, 40, 0x00ff00);
+        this.physics.add.existing(this.player);
+        this.player.body.setCollideWorldBounds(true);
+
+        // controls
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        // lanes
+        const lanes = [
+          { y: 450, speed: 100, label: 'Cybersecurity Intern' },
+          { y: 350, speed: -120, label: 'Stats Analyst' },
+          { y: 250, speed: 140, label: 'Data Intern' },
+          { y: 150, speed: -160, label: 'ASU Graduate' }
+        ];
+        this.obstacles = this.physics.add.group({ allowGravity: false, immovable: true });
+
+        lanes.forEach(lane => {
+          this.add.text(10, lane.y - 20, lane.label, { fontSize: '16px', fill: '#000' });
+          for (let i = 0; i < 5; i++) {
+            const x = Phaser.Math.Between(0, 800);
+            const rect = this.add.rectangle(x, lane.y, 80, 40, 0xff0000);
+            this.physics.add.existing(rect);
+            rect.body.setVelocityX(lane.speed);
+            rect.body.setImmovable(true);
+            this.obstacles.add(rect);
+          }
+        });
+
+        this.physics.add.collider(this.player, this.obstacles, () => this.resetPlayer(), null, this);
+      }
+
+      function update() {
+        const p = this.player.body;
+        p.setVelocity(0);
+        if (this.cursors.left.isDown) p.setVelocityX(-200);
+        else if (this.cursors.right.isDown) p.setVelocityX(200);
+        if (this.cursors.up.isDown) p.setVelocityY(-200);
+        else if (this.cursors.down.isDown) p.setVelocityY(200);
+
+        this.obstacles.children.iterate(obs => {
+          if (obs.x > 840 && obs.body.velocity.x > 0) obs.x = -40;
+          else if (obs.x < -40 && obs.body.velocity.x < 0) obs.x = 840;
+        });
+
+        if (this.player.y < 100) {
+          this.scene.pause();
+          alert('🎓 Congratulations! You crossed your journey!');
+          this.resetPlayer();
+          this.scene.resume();
+        }
+      }
+
+      function resetPlayer() {
+        this.player.x = 400;
+        this.player.y = 550;
+      }
+    });
   </script>
 </body>
 </html>
