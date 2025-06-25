@@ -155,6 +155,15 @@
       color: var(--light);
     }
   </style>
+
+  <!-- AOS CSS & JS -->
+  <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ duration: 800, once: true });
+    });
+  </script>
 </head>
 <body>
 
@@ -173,13 +182,13 @@
 
   <main>
     <!-- HERO -->
-    <section class="hero" id="home">
+    <section class="hero" id="home" data-aos="fade-up">
       <h1>Hi, I’m Noam Yakar</h1>
       <p>Summa Cum Laude CS & Math grad from ASU. I build data-driven tools, secure systems, and visualizations.</p>
     </section>
 
     <!-- EDUCATION -->
-    <section id="education">
+    <section id="education" data-aos="fade-up">
       <h2>Education</h2>
       <div class="resume-grid">
         <div class="education-item">
@@ -197,7 +206,7 @@
     </section>
 
     <!-- SKILLS -->
-    <section id="skills">
+    <section id="skills" data-aos="fade-up">
       <h2>Technical Skills</h2>
       <div class="resume-grid">
         <div class="skill-list-item">
@@ -229,7 +238,7 @@
     </section>
 
     <!-- EXPERIENCE -->
-    <section id="experience">
+    <section id="experience" data-aos="fade-up">
       <h2>Experience</h2>
 
       <div class="experience-item">
@@ -263,7 +272,7 @@
     </section>
 
     <!-- PROJECTS -->
-    <section id="projects">
+    <section id="projects" data-aos="fade-up">
       <h2>Projects</h2>
       <div class="projects-grid">
         <div class="project-card">
@@ -300,7 +309,7 @@
     </section>
 
     <!-- CONTACT -->
-    <section id="contact">
+    <section id="contact" data-aos="fade-up">
       <h2>Contact Me</h2>
       <form class="contact-form" action="https://formspree.io/f/yourformid" method="POST">
         <label for="name">Name</label>
