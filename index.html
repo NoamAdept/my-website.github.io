@@ -5,28 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terminal Runner Resume - Noam Yakar</title>
   <style>
-    body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; height: 100vh; display: flex; flex-direction: column; }
-    #terminal { flex: 1; padding: 10px; overflow: hidden; }
-    #game { font-size: 14px; line-height: 14px; white-space: pre; }
-    #input { border: none; background: transparent; color: #0f0; font-family: inherit; font-size: 14px; outline: none; flex: 1; }
-    .prompt { display: flex; padding: 10px; background: #111; }
-    .cursor { width: 8px; background: #0f0; animation: blink 1s steps(1) infinite; margin-left: 2px; }
-    @keyframes blink { from { opacity: 1; } to { opacity: 0; } }
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #terminal {
+      flex: 1;
+      padding: 10px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+    #game {
+      font-size: 14px;
+      line-height: 14px;
+    }
+    .prompt {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #111;
+    }
+    #input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: #0f0;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    .cursor {
+      width: 8px;
+      height: 14px;
+      background: #0f0;
+      animation: blink 1s steps(1) infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
   <div id="terminal">
-    <pre id="game"></pre>
+    <div id="game">Welcome to Terminal Runner! Type 'help' and press Enter.</div>
   </div>
   <div class="prompt">
-    <span>&gt; </span><input id="input" autofocus autocomplete="off" /><div class="cursor"></div>
+    <span>&gt; </span><input id="input" autofocus autocomplete="off" placeholder="Type command..." /><div class="cursor"></div>
   </div>
   <script>
     const gameEl = document.getElementById('game');
+    const terminalEl = document.getElementById('terminal');
     const input = document.getElementById('input');
     let runnerY = 0, vy = 0, gravity = 1, ground = 2;
     let obstacles = [], score = 0, gameOver = false, gameInterval;
     const width = 60, height = 10;
+
+    function log(text) {
+      gameEl.textContent += '\n' + text;
+      terminalEl.scrollTop = terminalEl.scrollHeight;
+    }
 
     function init() {
       clearInterval(gameInterval);
@@ -35,7 +79,7 @@
       gameOver = false;
       runnerY = 0;
       vy = 0;
-      gameEl.textContent = '';
+      gameEl.textContent = 'Game started! Use Space to jump.';
       gameInterval = setInterval(update, 100);
     }
 
@@ -47,27 +91,33 @@
       vy += gravity;
       runnerY += vy;
       if (runnerY > 0) { runnerY = 0; vy = 0; }
-
       if (Math.random() < 0.2) obstacles.push({ x: width - 1 });
       obstacles.forEach(o => o.x--);
-
       if (obstacles[0] && obstacles[0].x < 0) { obstacles.shift(); score++; }
       if (obstacles[0] && obstacles[0].x === 2 && runnerY === 0) { gameOver = true; }
-
       render();
-
       if (gameOver) {
         clearInterval(gameInterval);
-        gameEl.textContent += '\nGame Over! Score: ' + score + '\nType restart to play again';
+        log('Game Over! Score: ' + score);
+        log("Type 'restart' to play again.");
       }
     }
 
     function render() {
       let grid = Array.from({ length: height }, () => Array(width).fill(' '));
       grid[ground] = Array(width).fill('-');
-      grid[ground - runnerY - 1][2] = 'O';
-      obstacles.forEach(o => { if (o.x >= 0 && o.x < width) grid[ground - 1][o.x] = 'X'; });
-      gameEl.textContent = grid.map(r => r.join('')).join('\n') + '\nScore: ' + score;
+      if (ground - runnerY - 1 >= 0)
+        grid[ground - runnerY - 1][2] = 'O';
+      obstacles.forEach(o => {
+        if (o.x >= 0 && o.x < width) grid[ground - 1][o.x] = 'X';
+      });
+      // Replace game block
+      const frame = grid.map(r => r.join('')).join('\n');
+      // Update only the block area
+      let content = gameEl.textContent.split('---FRAME---')[0];
+      content += '\n---FRAME---\n' + frame + '\nScore: ' + score;
+      gameEl.textContent = content;
+      terminalEl.scrollTop = terminalEl.scrollHeight;
     }
 
     document.addEventListener('keydown', e => {
@@ -77,13 +127,19 @@
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         const cmd = input.value.trim().toLowerCase();
-        if (cmd === 'start' || cmd === 'restart') init();
-        else if (cmd === 'help') gameEl.textContent = 'Commands: start, restart, help';
         input.value = '';
+        if (cmd === 'start' || cmd === 'restart') {
+          log('> ' + cmd);
+          init();
+        } else if (cmd === 'help') {
+          log('> help');
+          log("Commands: help, start, restart");
+        } else {
+          log('> ' + cmd);
+          log("Unknown command. Type 'help'.");
+        }
       }
     });
-
-    gameEl.textContent = 'Welcome to Terminal Runner! Type help for commands.';
   </script>
 </body>
 </html>
