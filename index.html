@@ -5,141 +5,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terminal Runner Resume - Noam Yakar</title>
   <style>
-    body {
-      background: #000;
-      color: #0f0;
-      font-family: 'Courier New', monospace;
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    #terminal {
-      flex: 1;
-      padding: 10px;
-      overflow: auto;
-      white-space: pre-wrap;
-    }
-    #game {
-      font-size: 14px;
-      line-height: 14px;
-    }
-    .prompt {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background: #111;
-    }
-    #input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      color: #0f0;
-      font-family: inherit;
-      font-size: 14px;
-      outline: none;
-    }
-    .cursor {
-      width: 8px;
-      height: 14px;
-      background: #0f0;
-      animation: blink 1s steps(1) infinite;
-      margin-left: 2px;
-    }
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
+    body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+    #terminal { flex: 1; padding: 10px; overflow: auto; white-space: pre-wrap; }
+    #prompt { display: flex; align-items: center; padding: 10px; background: #111; }
+    #input { flex: 1; border: none; background: transparent; color: #0f0; font-family: inherit; font-size: 14px; outline: none; }
+    .cursor { width: 8px; height: 14px; background: #0f0; animation: blink 1s steps(1) infinite; margin-left: 2px; }
+    @keyframes blink { 0%,50%{opacity:1;}51%,100%{opacity:0;} }
   </style>
 </head>
 <body>
   <div id="terminal">
-    <div id="game">Welcome to Terminal Runner! Type 'help' and press Enter.</div>
+    <div id="game">Welcome to Noam Yakar’s Terminal Resume!
+Type 'help' for commands.
+</div>
   </div>
-  <div class="prompt">
+  <div id="prompt">
     <span>&gt; </span><input id="input" autofocus autocomplete="off" placeholder="Type command..." /><div class="cursor"></div>
   </div>
   <script>
+    const terminal = document.getElementById('terminal');
     const gameEl = document.getElementById('game');
-    const terminalEl = document.getElementById('terminal');
     const input = document.getElementById('input');
-    let runnerY = 0, vy = 0, gravity = 1, ground = 2;
+
+    // State
     let obstacles = [], score = 0, gameOver = false, gameInterval;
-    const width = 60, height = 10;
+    const width = 60, height = 10, gravity = 1, ground = 2;
+    let runnerY = 0, vy = 0;
+    // Resume data
+    const resume = {
+      skills: ['JavaScript', 'Python', 'React', 'Phaser.js', 'HTML/CSS'],
+      experience: ['2025-Present: Software Engineer @ TechCorp', '2024-2025: Intern @ ASU Research Lab'],
+      education: ['B.S. in CS & Math, ASU, Summa Cum Laude (May 2025)']
+    };
+    // Unlock thresholds
+    const unlocks = { skills: {score:5, unlocked:false}, experience:{score:15, unlocked:false}, education:{score:25, unlocked:false} };
 
-    function log(text) {
-      gameEl.textContent += '\n' + text;
-      terminalEl.scrollTop = terminalEl.scrollHeight;
-    }
+    function log(msg){ gameEl.textContent += '\n'+msg; terminal.scrollTop = terminal.scrollHeight; }
 
-    function init() {
+    function initGame(){
       clearInterval(gameInterval);
-      obstacles = [];
-      score = 0;
-      gameOver = false;
-      runnerY = 0;
-      vy = 0;
-      gameEl.textContent = 'Game started! Use Space to jump.';
-      gameInterval = setInterval(update, 100);
+      obstacles=[]; score=0; gameOver=false; runnerY=0; vy=0;
+      log('Game started! Jump over X obstacles.');
+      gameInterval = setInterval(updateGame,100);
     }
 
-    function jump() {
-      if (runnerY === 0) vy = -5;
+    function updateGame(){
+      // physics
+      vy += gravity; runnerY += vy; if(runnerY>0){ runnerY=0; vy=0; }
+      // obstacle spawn
+      if(Math.random()<0.2) obstacles.push({x:width-1});
+      obstacles.forEach(o=>o.x--);
+      // scoring
+      if(obstacles[0] && obstacles[0].x<0){ obstacles.shift(); score++; log('Score: '+score); checkUnlocks(); }
+      // collision
+      if(obstacles[0] && obstacles[0].x===2 && runnerY===0){ gameOver=true; }
+      renderGame();
+      if(gameOver){ clearInterval(gameInterval); log('Game Over! Final Score: '+score+'\nType restart to play again.'); }
     }
 
-    function update() {
-      vy += gravity;
-      runnerY += vy;
-      if (runnerY > 0) { runnerY = 0; vy = 0; }
-      if (Math.random() < 0.2) obstacles.push({ x: width - 1 });
-      obstacles.forEach(o => o.x--);
-      if (obstacles[0] && obstacles[0].x < 0) { obstacles.shift(); score++; }
-      if (obstacles[0] && obstacles[0].x === 2 && runnerY === 0) { gameOver = true; }
-      render();
-      if (gameOver) {
-        clearInterval(gameInterval);
-        log('Game Over! Score: ' + score);
-        log("Type 'restart' to play again.");
+    function renderGame(){
+      let grid = Array.from({length:height},()=>Array(width).fill(' '));
+      grid[ground] = Array(width).fill('-');
+      if(ground-runnerY-1>=0) grid[ground-runnerY-1][2]='O';
+      obstacles.forEach(o=>{ if(o.x>=0&&o.x<width) grid[ground-1][o.x]='X'; });
+      const frame = grid.map(r=>r.join('')).join('\n');
+      let parts = gameEl.textContent.split('---FRAME---');
+      gameEl.textContent = parts[0]+'---FRAME---\n'+frame;
+      terminal.scrollTop=terminal.scrollHeight;
+    }
+
+    function checkUnlocks(){
+      for(const key in unlocks){
+        if(!unlocks[key].unlocked && score>=unlocks[key].score){
+          unlocks[key].unlocked=true;
+          log(`🎉 Badge Unlocked: ${key.charAt(0).toUpperCase()+key.slice(1)} Explorer! Type '${key}' to view.`);
+        }
       }
     }
 
-    function render() {
-      let grid = Array.from({ length: height }, () => Array(width).fill(' '));
-      grid[ground] = Array(width).fill('-');
-      if (ground - runnerY - 1 >= 0)
-        grid[ground - runnerY - 1][2] = 'O';
-      obstacles.forEach(o => {
-        if (o.x >= 0 && o.x < width) grid[ground - 1][o.x] = 'X';
-      });
-      // Replace game block
-      const frame = grid.map(r => r.join('')).join('\n');
-      // Update only the block area
-      let content = gameEl.textContent.split('---FRAME---')[0];
-      content += '\n---FRAME---\n' + frame + '\nScore: ' + score;
-      gameEl.textContent = content;
-      terminalEl.scrollTop = terminalEl.scrollHeight;
-    }
-
-    document.addEventListener('keydown', e => {
-      if (e.code === 'Space') jump();
-    });
-
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        const cmd = input.value.trim().toLowerCase();
-        input.value = '';
-        if (cmd === 'start' || cmd === 'restart') {
-          log('> ' + cmd);
-          init();
-        } else if (cmd === 'help') {
-          log('> help');
-          log("Commands: help, start, restart");
-        } else {
-          log('> ' + cmd);
-          log("Unknown command. Type 'help'.");
+    // Input commands
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){
+        const cmd=input.value.trim().toLowerCase(); input.value=''; log('> '+cmd);
+        switch(cmd){
+          case 'help': log("Commands: help, start, restart, skills, experience, education"); break;
+          case 'start': case 'restart': initGame(); break;
+          case 'skills':
+            if(unlocks.skills.unlocked) resume.skills.forEach(s=>log('- '+s));
+            else log(`🔒 Locked. Reach ${unlocks.skills.score} pts to unlock.`); break;
+          case 'experience':
+            if(unlocks.experience.unlocked) resume.experience.forEach(e=>log('- '+e));
+            else log(`🔒 Locked. Reach ${unlocks.experience.score} pts to unlock.`); break;
+          case 'education':
+            if(unlocks.education.unlocked) resume.education.forEach(ed=>log('- '+ed));
+            else log(`🔒 Locked. Reach ${unlocks.education.score} pts to unlock.`); break;
+          default: log("Unknown command. Type 'help'.");
         }
       }
     });
+
+    // jump
+    document.addEventListener('keydown',e=>{ if(e.code==='Space') runnerY===0 && (vy=-5); });
   </script>
 </body>
 </html>
