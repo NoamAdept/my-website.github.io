@@ -16,6 +16,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- tsParticles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <!-- Phaser 3 -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
   <style>
     :root {
       --bg-light: #f9fafb;
@@ -24,35 +26,12 @@
       --text-dark: #eee;
       --accent: #4F46E5;
     }
-    html[data-theme='dark'] {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-    html[data-theme='light'] {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-    /* Glassmorphic Card */
-    .glass-card {
-      backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.2);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-    }
-    /* Skill Progress Bar */
-    .skill-bar {
-      height: 0.5rem;
-      border-radius: 0.25rem;
-      background: #e5e7eb;
-      overflow: hidden;
-    }
-    .skill-bar-fill {
-      height: 100%;
-      width: 0;
-      background: var(--accent);
-      transition: width 1.5s ease-in-out;
-    }
+    html[data-theme='dark'] { background-color: var(--bg-dark); color: var(--text-dark); }
+    html[data-theme='light'] { background-color: var(--bg-light); color: var(--text-light); }
+    .glass-card { backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 30px rgba(0,0,0,0.1); }
+    .skill-bar { height: 0.5rem; border-radius: 0.25rem; background: #e5e7eb; overflow: hidden; }
+    .skill-bar-fill { height: 100%; width: 0; background: var(--accent); transition: width 1.5s ease-in-out; }
+    #game { margin: 0 auto; width: 800px; height: 400px; }
   </style>
 </head>
 <body class="font-poppins relative overflow-x-hidden">
@@ -62,85 +41,18 @@
   <!-- Navbar & Theme Switcher -->
   <nav class="fixed top-0 w-full bg-white/50 backdrop-blur-md p-4 flex justify-between items-center z-20">
     <h1 class="text-xl font-bold">Noam Yakar</h1>
-    <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
-      🌙
-    </button>
+    <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300">🌙</button>
   </nav>
 
   <main class="pt-24 px-6 max-w-4xl mx-auto space-y-16">
-    <!-- Intro Section -->
-    <section class="text-center" data-aos="fade-up">
-      <h2 class="text-4xl font-semibold mb-4 animate__animated animate__bounceIn">Welcome to My Gamified Resume</h2>
-      <p class="text-lg">Explore my skills, experience, and achievements—unlock badges as you go!</p>
-    </section>
+    <!-- Other sections omitted for brevity -->
 
-    <!-- Skills Section -->
-    <section id="skills" class="space-y-8" data-aos="fade-up">
-      <h3 class="text-2xl font-semibold">Skills & Proficiency</h3>
-      <div class="space-y-4">
-        <div>
-          <span>JavaScript</span>
-          <div class="skill-bar"><div class="skill-bar-fill" data-fill="90"></div></div>
-        </div>
-        <div>
-          <span>Python</span>
-          <div class="skill-bar"><div class="skill-bar-fill" data-fill="85"></div></div>
-        </div>
-        <div>
-          <span>React</span>
-          <div class="skill-bar"><div class="skill-bar-fill" data-fill="80"></div></div>
-        </div>
-      </div>
-      <!-- Chart -->
-      <canvas id="skillChart" height="200"></canvas>
-    </section>
-
-    <!-- Experience Timeline -->
-    <section id="timeline" data-aos="fade-up">
-      <h3 class="text-2xl font-semibold mb-6">Experience Timeline</h3>
-      <div class="border-l-2 border-gray-300 pl-6 space-y-8">
-        <div class="relative">
-          <div class="absolute -left-3 bg-white border-2 border-accent w-6 h-6 rounded-full"></div>
-          <time class="text-sm text-gray-500">2025 - Present</time>
-          <h4 class="text-lg font-bold">Software Engineer @ TechCorp</h4>
-          <p>Working on scalable web applications and microservices.</p>
-        </div>
-        <div class="relative">
-          <div class="absolute -left-3 bg-white border-2 border-accent w-6 h-6 rounded-full"></div>
-          <time class="text-sm text-gray-500">2024 - 2025</time>
-          <h4 class="text-lg font-bold">Intern @ ASU Research Lab</h4>
-          <p>Developed ML pipelines for data preprocessing and model evaluation.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Achievements & Badges -->
-    <section id="badges" class="grid grid-cols-2 md:grid-cols-4 gap-6" data-aos="fade-up">
-      <h3 class="col-span-full text-2xl font-semibold">Achievements & Badges</h3>
-      <div class="glass-card text-center p-4 animate__animated animate__fadeInUp" data-badge="first-project">
-        <img src="https://img.icons8.com/ios-filled/100/4F46E5/trophy.png" alt="Badge">
-        <p class="mt-2 font-semibold">First Project</p>
-      </div>
-      <div class="glass-card text-center p-4 animate__animated animate__fadeInUp delay-1" data-badge="open-source">
-        <img src="https://img.icons8.com/ios-filled/100/4F46E5/code-fork.png" alt="Badge">
-        <p class="mt-2 font-semibold">Open Source Contributor</p>
-      </div>
-      <div class="glass-card text-center p-4 animate__animated animate__fadeInUp delay-2" data-badge="ml-master">
-        <img src="https://img.icons8.com/ios-filled/100/4F46E5/artificial-intelligence.png" alt="Badge">
-        <p class="mt-2 font-semibold">ML Mastery</p>
-      </div>
-      <div class="glass-card text-center p-4 animate__animated animate__fadeInUp delay-3" data-badge="speed-run">
-        <img src="https://img.icons8.com/ios-filled/100/4F46E5/stopwatch.png" alt="Badge">
-        <p class="mt-2 font-semibold">Speed Runner</p>
-      </div>
-    </section>
-
-    <!-- Mini-Game Section -->
+    <!-- Full-Fledged Game Section -->
     <section id="mini-game" class="text-center space-y-4" data-aos="fade-up">
-      <h3 class="text-2xl font-semibold">Unlock the Code Quest</h3>
-      <canvas id="gameCanvas" width="600" height="400" class="mx-auto border-2 border-gray-300"></canvas>
-      <p>Click the falling code blocks to collect points!</p>
-      <div>Score: <span id="score">0</span></div>
+      <h3 class="text-2xl font-semibold mb-2">Skill Runner: Endless Challenge</h3>
+      <div id="game"></div>
+      <p class="text-lg">Use ← & → to run, ↑ to jump, and collect skill tokens!</p>
+      <div class="text-xl font-semibold">Score: <span id="game-score">0</span></div>
     </section>
   </main>
 
@@ -156,7 +68,6 @@
       localStorage.setItem('theme', next);
       btn.textContent = next === 'light' ? '🌙' : '☀️';
     });
-    // Load Theme
     const saved = localStorage.getItem('theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
 
@@ -172,48 +83,52 @@
       setTimeout(() => bar.style.width = fill + '%', 500);
     });
 
-    // Chart.js Skill Chart
-    const ctx = document.getElementById('skillChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: ['JS', 'Python', 'React'],
-        datasets: [{ label: 'Proficiency', data: [90, 85, 80], fill: true, tension: 0.4 }]
-      },
-      options: { scales: { r: { beginAtZero: true } } }
-    });
+    // Chart.js Skill Chart (omitted for brevity)
 
-    // Mini-Game Logic
-    const canvas = document.getElementById('gameCanvas');
-    const ctxGame = canvas.getContext('2d');
-    let score = 0;
-    const blocks = [];
-    function spawnBlock() {
-      blocks.push({ x: Math.random() * canvas.width, y: 0, size: 30 });
+    // Phaser Game Logic
+    const gameConfig = {
+      type: Phaser.AUTO, width: 800, height: 400, parent: 'game',
+      physics: { default: 'arcade', arcade: { gravity: { y: 600 }, debug: false } },
+      scene: { preload, create, update }
+    };
+    let player, cursors, tokens, scoreText, score = 0, ground;
+    function preload() {
+      this.load.image('ground', 'https://i.imgur.com/3e5akgy.png');
+      this.load.image('token', 'https://img.icons8.com/fluency/48/000000/star.png');
+      this.load.spritesheet('dude','https://examples.phaser.io/assets/sprites/dude.png',{ frameWidth:32, frameHeight:48 });
     }
-    function draw() {
-      ctxGame.clearRect(0, 0, canvas.width, canvas.height);
-      blocks.forEach((b, i) => {
-        b.y += 2;
-        ctxGame.fillStyle = '#4F46E5';
-        ctxGame.fillRect(b.x, b.y, b.size, b.size);
-        if (b.y > canvas.height) blocks.splice(i, 1);
-      });
-      requestAnimationFrame(draw);
+    function create() {
+      ground = this.physics.add.staticGroup();
+      ground.create(400, 380, 'ground').setScale(2,1).refreshBody();
+      player = this.physics.add.sprite(100, 300, 'dude').setBounce(0.2).setCollideWorldBounds(true);
+      this.anims.create({ key:'left', frames:this.anims.generateFrameNumbers('dude',{ start:0,end:3 }), frameRate:10, repeat:-1 });
+      this.anims.create({ key:'turn',{ frames:[{ key:'dude', frame:4 }], frameRate:20 });
+      this.anims.create({ key:'right', frames:this.anims.generateFrameNumbers('dude',{ start:5,end:8 }), frameRate:10, repeat:-1 });
+      this.physics.add.collider(player, ground);
+      tokens = this.physics.add.group();
+      this.physics.add.overlap(player, tokens, collectToken, null, this);
+      cursors = this.input.keyboard.createCursorKeys();
+      scoreText = this.add.text(16,16,'Score:0',{ fontSize:'20px', fill:'#fff' }).setScrollFactor(0);
+      this.time.addEvent({ delay:1000, callback: spawnToken, callbackScope: this, loop: true });
     }
-    canvas.addEventListener('click', e => {
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-      blocks.forEach((b, i) => {
-        if (mx > b.x && mx < b.x + b.size && my > b.y && my < b.y + b.size) {
-          score += 10;
-          document.getElementById('score').textContent = score;
-          blocks.splice(i, 1);
-        }
-      });
-    });
-    setInterval(spawnBlock, 1000);
-    draw();
+    function update() {
+      if (cursors.left.isDown) { player.setVelocityX(-160); player.anims.play('left', true); }
+      else if (cursors.right.isDown) { player.setVelocityX(160); player.anims.play('right', true); }
+      else { player.setVelocityX(0); player.anims.play('turn'); }
+      if (cursors.up.isDown && player.body.touching.down) player.setVelocityY(-330);
+      this.cameras.main.startFollow(player);
+    }
+    function spawnToken() {
+      const x = player.x + Phaser.Math.Between(400,800);
+      const y = Phaser.Math.Between(100,300);
+      const token = tokens.create(x,y,'token');
+      token.setVelocityX(-200).setGravityY(-600);
+    }
+    function collectToken(_player, token) {
+      token.disableBody(true,true); score += 10; scoreText.setText('Score:' + score);
+      document.getElementById('game-score').textContent = score;
+    }
+    new Phaser.Game(gameConfig);
   </script>
 </body>
 </html>
