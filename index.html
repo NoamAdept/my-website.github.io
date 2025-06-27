@@ -3,29 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chop & Learn Resume Game</title>
+  <title>Chop & Learn: Lumberjack Adventure</title>
   <style>
-    body { margin: 0; background: #87ceeb; overflow: hidden; }
-    #gameCanvas { display: block; background: #228B22; image-rendering: pixelated; }
-    #info { position: absolute; top: 10px; left: 10px; width: 300px; padding: 10px; background: rgba(0,0,0,0.5); color: #fff; font-family: monospace; font-size: 14px; max-height: 90vh; overflow-y: auto; }
+    * { margin: 0; padding: 0; }
+    canvas { display: block; image-rendering: pixelated; }
+    #info {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 280px;
+      padding: 10px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 2px solid #8B4513;
+    }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <canvas id="gameCanvas"></canvas>
   <div id="info"><strong>Chop trees to learn about Noam:</strong></div>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
 
-    const tile = 20;
-    const groundY = canvas.height - tile * 2;
+    // Resize handler
+    window.addEventListener('resize', () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    });
 
-    let man = { x: 100, y: groundY, width: tile, height: tile * 2, vx: 0, vy: 0, speed: 2 };
-    let trees = [];
-    let keys = {};
-    let lastSpawn = 0;
+    // Layers
+    const farTrees = [];
+    const nearTrees = [];
+    const treeCount = 20;
+    const tile = 50;
 
+    // Generate static far background trees
+    for (let i = 0; i < treeCount; i++) {
+      farTrees.push({ x: Math.random() * W, y: H - tile*2 - Math.random()*200, scale: 0.5 + Math.random()*0.3 });
+    }
+
+    // Player (lumberjack)
+    const man = { x: W/4, y: H - tile*2, w: tile, h: tile*2, vx: 0, speed: 5 };
+
+    // Resume facts
     const resumeFacts = [
       '👨‍💻 B.S. in CS & Math, ASU, Summa Cum Laude (May 2025)',
       '💼 Software Engineer @ TechCorp (2025-Present)',
@@ -33,68 +60,103 @@
       '📜 Skills: JavaScript, Python, React, Phaser.js, HTML/CSS'
     ];
     let factIndex = 0;
-
     const infoDiv = document.getElementById('info');
 
-    function spawnTree() {
-      const x = canvas.width + tile;
-      trees.push({ x, y: groundY - tile, width: tile, height: tile * 2 });
+    // Input
+    const keys = {};
+    window.addEventListener('keydown', e => keys[e.code] = true);
+    window.addEventListener('keyup', e => keys[e.code] = false);
+
+    // Spawn near trees
+    function spawnNearTree() {
+      nearTrees.push({ x: W + tile, y: H - tile*2, w: tile, h: tile*2 });
     }
 
+    let lastSpawn = 0;
+    let score = 0;
+
     function update(dt) {
-      // controls
+      // Move background trees slowly
+      farTrees.forEach(t => {
+        t.x -= 0.2;
+        if (t.x + tile < 0) t.x = W;
+      });
+      // Player movement
       man.vx = 0;
-      if (keys['ArrowLeft']) man.vx = -man.speed;
-      if (keys['ArrowRight']) man.vx = man.speed;
-      // apply
+      if (keys['ArrowLeft'] && man.x > 0) man.vx = -man.speed;
+      if (keys['ArrowRight'] && man.x + man.w < W) man.vx = man.speed;
       man.x += man.vx;
-      // spawn
+
+      // Spawn near trees dynamically
       lastSpawn += dt;
-      if (lastSpawn > 1500) { spawnTree(); lastSpawn = 0; }
-      // move trees
-      trees.forEach(t => t.x -= 1.5);
-      // collision and chop
+      if (lastSpawn > 1500) { spawnNearTree(); lastSpawn = 0; }
+      nearTrees.forEach(t => t.x -= 3);
+
+      // Chop logic
       if (keys['KeyC']) {
-        trees = trees.filter(t => {
-          if (man.x + man.width > t.x && man.x < t.x + t.width) {
+        nearTrees.forEach((t,i) => {
+          if (man.x + man.w > t.x && man.x < t.x + t.w) {
             // chopped
+            score++;
             if (factIndex < resumeFacts.length) {
               const p = document.createElement('p');
               p.textContent = resumeFacts[factIndex++];
               infoDiv.appendChild(p);
             }
-            return false; // remove tree
+            nearTrees.splice(i,1);
           }
-          return true;
         });
         keys['KeyC'] = false;
       }
-      // remove off-screen
-      trees = trees.filter(t => t.x + t.width > 0);
+      // Clean up
+      for (let i = nearTrees.length-1; i >=0; i--) {
+        if (nearTrees[i].x + nearTrees[i].w < 0) nearTrees.splice(i,1);
+      }
     }
 
     function draw() {
-      // clear
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // draw ground
-      ctx.fillStyle = '#8B4513';
-      ctx.fillRect(0, groundY + man.height, canvas.width, canvas.height - groundY - man.height);
-      // draw man (8-bit style)
-      ctx.fillStyle = '#000';
-      ctx.fillRect(man.x, man.y, man.width, man.height);
-      // draw trees
-      trees.forEach(t => {
-        // trunk
-        ctx.fillStyle = '#654321';
-        ctx.fillRect(t.x + t.width/3, t.y + t.height/2, t.width/3, t.height/2);
-        // leaves
-        ctx.fillStyle = '#0a0';
-        ctx.fillRect(t.x, t.y, t.width, t.height/2);
+      // Sky gradient
+      const sky = ctx.createLinearGradient(0,0,0,H);
+      sky.addColorStop(0,'#87ceeb');
+      sky.addColorStop(1,'#228B22');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0,0,W,H);
+
+      // Draw far trees
+      farTrees.forEach(t => {
+        ctx.fillStyle = '#2f4f4f';
+        ctx.fillRect(t.x, t.y, tile*t.scale, tile*2*t.scale);
       });
+
+      // Draw ground
+      ctx.fillStyle = '#654321';
+      ctx.fillRect(0, H - tile, W, tile);
+
+      // Draw near trees
+      nearTrees.forEach(t => {
+        // trunk
+        ctx.fillStyle = '#8b4513';
+        ctx.fillRect(t.x + t.w/3, t.y + t.h/2, t.w/3, t.h/2);
+        // leaves
+        ctx.fillStyle = '#006400';
+        ctx.fillRect(t.x - t.w*0.2, t.y, t.w*1.4, t.h*0.6);
+      });
+
+      // Draw lumberjack (8-bit style)
+      // body
+      ctx.fillStyle = '#8b0000'; ctx.fillRect(man.x, man.y+man.h*0.3, man.w, man.h*0.7);
+      // head
+      ctx.fillStyle = '#ffdbac'; ctx.fillRect(man.x+man.w*0.2, man.y, man.w*0.6, man.h*0.3);
+      // axe
+      ctx.strokeStyle = '#ccc'; ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(man.x+man.w, man.y+man.h*0.3);
+      ctx.lineTo(man.x+man.w+20, man.y+man.h*0.2);
+      ctx.stroke();
     }
 
     let lastTime = 0;
-    function loop(time = 0) {
+    function loop(time=0) {
       const dt = time - lastTime;
       lastTime = time;
       update(dt);
@@ -103,11 +165,7 @@
     }
     requestAnimationFrame(loop);
 
-    // input
-    window.addEventListener('keydown', e => { keys[e.code] = true; });
-    window.addEventListener('keyup', e => { keys[e.code] = false; });
-
-    // instructions
+    // Instructions
     const instr = document.createElement('p');
     instr.textContent = "← → to move, C to chop";
     infoDiv.appendChild(instr);
