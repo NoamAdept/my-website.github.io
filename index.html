@@ -3,109 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terminal Runner Resume - Noam Yakar</title>
+  <title>Chop & Learn Resume Game</title>
   <style>
-    body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; height: 100vh; display: flex; flex-direction: column; }
-    #terminal { flex: 1; padding: 10px; overflow: auto; white-space: pre-wrap; }
-    #prompt { display: flex; align-items: center; padding: 10px; background: #111; }
-    #input { flex: 1; border: none; background: transparent; color: #0f0; font-family: inherit; font-size: 14px; outline: none; }
-    .cursor { width: 8px; height: 14px; background: #0f0; animation: blink 1s steps(1) infinite; margin-left: 2px; }
-    @keyframes blink { 0%,50%{opacity:1;}51%,100%{opacity:0;} }
+    body { margin: 0; background: #87ceeb; overflow: hidden; }
+    #gameCanvas { display: block; background: #228B22; image-rendering: pixelated; }
+    #info { position: absolute; top: 10px; left: 10px; width: 300px; padding: 10px; background: rgba(0,0,0,0.5); color: #fff; font-family: monospace; font-size: 14px; max-height: 90vh; overflow-y: auto; }
   </style>
 </head>
 <body>
-  <div id="terminal">
-    <div id="game">Welcome to Noam Yakar’s Terminal Resume!
-Type 'help' for commands.
-</div>
-  </div>
-  <div id="prompt">
-    <span>&gt; </span><input id="input" autofocus autocomplete="off" placeholder="Type command..." /><div class="cursor"></div>
-  </div>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <div id="info"><strong>Chop trees to learn about Noam:</strong></div>
   <script>
-    const terminal = document.getElementById('terminal');
-    const gameEl = document.getElementById('game');
-    const input = document.getElementById('input');
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
 
-    // State
-    let obstacles = [], score = 0, gameOver = false, gameInterval;
-    const width = 60, height = 10, gravity = 1, ground = 2;
-    let runnerY = 0, vy = 0;
-    // Resume data
-    const resume = {
-      skills: ['JavaScript', 'Python', 'React', 'Phaser.js', 'HTML/CSS'],
-      experience: ['2025-Present: Software Engineer @ TechCorp', '2024-2025: Intern @ ASU Research Lab'],
-      education: ['B.S. in CS & Math, ASU, Summa Cum Laude (May 2025)']
-    };
-    // Unlock thresholds
-    const unlocks = { skills: {score:5, unlocked:false}, experience:{score:15, unlocked:false}, education:{score:25, unlocked:false} };
+    const tile = 20;
+    const groundY = canvas.height - tile * 2;
 
-    function log(msg){ gameEl.textContent += '\n'+msg; terminal.scrollTop = terminal.scrollHeight; }
+    let man = { x: 100, y: groundY, width: tile, height: tile * 2, vx: 0, vy: 0, speed: 2 };
+    let trees = [];
+    let keys = {};
+    let lastSpawn = 0;
 
-    function initGame(){
-      clearInterval(gameInterval);
-      obstacles=[]; score=0; gameOver=false; runnerY=0; vy=0;
-      log('Game started! Jump over X obstacles.');
-      gameInterval = setInterval(updateGame,100);
+    const resumeFacts = [
+      '👨‍💻 B.S. in CS & Math, ASU, Summa Cum Laude (May 2025)',
+      '💼 Software Engineer @ TechCorp (2025-Present)',
+      '🛠️ Intern @ ASU Research Lab (2024-2025)',
+      '📜 Skills: JavaScript, Python, React, Phaser.js, HTML/CSS'
+    ];
+    let factIndex = 0;
+
+    const infoDiv = document.getElementById('info');
+
+    function spawnTree() {
+      const x = canvas.width + tile;
+      trees.push({ x, y: groundY - tile, width: tile, height: tile * 2 });
     }
 
-    function updateGame(){
-      // physics
-      vy += gravity; runnerY += vy; if(runnerY>0){ runnerY=0; vy=0; }
-      // obstacle spawn
-      if(Math.random()<0.2) obstacles.push({x:width-1});
-      obstacles.forEach(o=>o.x--);
-      // scoring
-      if(obstacles[0] && obstacles[0].x<0){ obstacles.shift(); score++; log('Score: '+score); checkUnlocks(); }
-      // collision
-      if(obstacles[0] && obstacles[0].x===2 && runnerY===0){ gameOver=true; }
-      renderGame();
-      if(gameOver){ clearInterval(gameInterval); log('Game Over! Final Score: '+score+'\nType restart to play again.'); }
-    }
-
-    function renderGame(){
-      let grid = Array.from({length:height},()=>Array(width).fill(' '));
-      grid[ground] = Array(width).fill('-');
-      if(ground-runnerY-1>=0) grid[ground-runnerY-1][2]='O';
-      obstacles.forEach(o=>{ if(o.x>=0&&o.x<width) grid[ground-1][o.x]='X'; });
-      const frame = grid.map(r=>r.join('')).join('\n');
-      let parts = gameEl.textContent.split('---FRAME---');
-      gameEl.textContent = parts[0]+'---FRAME---\n'+frame;
-      terminal.scrollTop=terminal.scrollHeight;
-    }
-
-    function checkUnlocks(){
-      for(const key in unlocks){
-        if(!unlocks[key].unlocked && score>=unlocks[key].score){
-          unlocks[key].unlocked=true;
-          log(`🎉 Badge Unlocked: ${key.charAt(0).toUpperCase()+key.slice(1)} Explorer! Type '${key}' to view.`);
-        }
+    function update(dt) {
+      // controls
+      man.vx = 0;
+      if (keys['ArrowLeft']) man.vx = -man.speed;
+      if (keys['ArrowRight']) man.vx = man.speed;
+      // apply
+      man.x += man.vx;
+      // spawn
+      lastSpawn += dt;
+      if (lastSpawn > 1500) { spawnTree(); lastSpawn = 0; }
+      // move trees
+      trees.forEach(t => t.x -= 1.5);
+      // collision and chop
+      if (keys['KeyC']) {
+        trees = trees.filter(t => {
+          if (man.x + man.width > t.x && man.x < t.x + t.width) {
+            // chopped
+            if (factIndex < resumeFacts.length) {
+              const p = document.createElement('p');
+              p.textContent = resumeFacts[factIndex++];
+              infoDiv.appendChild(p);
+            }
+            return false; // remove tree
+          }
+          return true;
+        });
+        keys['KeyC'] = false;
       }
+      // remove off-screen
+      trees = trees.filter(t => t.x + t.width > 0);
     }
 
-    // Input commands
-    input.addEventListener('keydown',e=>{
-      if(e.key==='Enter'){
-        const cmd=input.value.trim().toLowerCase(); input.value=''; log('> '+cmd);
-        switch(cmd){
-          case 'help': log("Commands: help, start, restart, skills, experience, education"); break;
-          case 'start': case 'restart': initGame(); break;
-          case 'skills':
-            if(unlocks.skills.unlocked) resume.skills.forEach(s=>log('- '+s));
-            else log(`🔒 Locked. Reach ${unlocks.skills.score} pts to unlock.`); break;
-          case 'experience':
-            if(unlocks.experience.unlocked) resume.experience.forEach(e=>log('- '+e));
-            else log(`🔒 Locked. Reach ${unlocks.experience.score} pts to unlock.`); break;
-          case 'education':
-            if(unlocks.education.unlocked) resume.education.forEach(ed=>log('- '+ed));
-            else log(`🔒 Locked. Reach ${unlocks.education.score} pts to unlock.`); break;
-          default: log("Unknown command. Type 'help'.");
-        }
-      }
-    });
+    function draw() {
+      // clear
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // draw ground
+      ctx.fillStyle = '#8B4513';
+      ctx.fillRect(0, groundY + man.height, canvas.width, canvas.height - groundY - man.height);
+      // draw man (8-bit style)
+      ctx.fillStyle = '#000';
+      ctx.fillRect(man.x, man.y, man.width, man.height);
+      // draw trees
+      trees.forEach(t => {
+        // trunk
+        ctx.fillStyle = '#654321';
+        ctx.fillRect(t.x + t.width/3, t.y + t.height/2, t.width/3, t.height/2);
+        // leaves
+        ctx.fillStyle = '#0a0';
+        ctx.fillRect(t.x, t.y, t.width, t.height/2);
+      });
+    }
 
-    // jump
-    document.addEventListener('keydown',e=>{ if(e.code==='Space') runnerY===0 && (vy=-5); });
+    let lastTime = 0;
+    function loop(time = 0) {
+      const dt = time - lastTime;
+      lastTime = time;
+      update(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // input
+    window.addEventListener('keydown', e => { keys[e.code] = true; });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+    // instructions
+    const instr = document.createElement('p');
+    instr.textContent = "← → to move, C to chop";
+    infoDiv.appendChild(instr);
   </script>
 </body>
 </html>
